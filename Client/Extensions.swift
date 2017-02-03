@@ -1,4 +1,5 @@
 import Functional
+import JSONObject
 
 //: ------------------------
 
@@ -35,9 +36,9 @@ extension URLComponents {
 
 extension Request {
 	public func getHTTPResponse(connection: @escaping Connection) -> Resource<HTTPResponse> {
-		return Deferred(Writer(self)
+		return Deferred(Writer(Result(self))
 			.tell(getConnectionInfo))
-			.flatMapT(connection)
+			.flatMapTT(connection)
 			.flatMapTT {
 				let optData = $0.optData
 				let optResponse = $0.optResponse as? HTTPURLResponse
@@ -66,5 +67,59 @@ extension Request {
 						info))
 				}
 		}
+	}
+
+	public static func get(
+		identifier: String,
+		configuration: ClientConfiguration,
+		path: String,
+		additionalHeaders: [String:String]? = nil,
+		queryStringParameters: AnyDict? = nil,
+		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		return Request(
+			identifier: identifier,
+			configuration: configuration,
+			method: .get,
+			additionalHeaders: additionalHeaders,
+			path: path,
+			queryStringParameters: queryStringParameters,
+			body: nil)
+			.getHTTPResponse(connection: connection)
+	}
+
+	public static func post(
+		identifier: String,
+		configuration: ClientConfiguration,
+		path: String,
+		body: Data?,
+		additionalHeaders: [String:String]? = nil,
+		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		return Request(
+			identifier: identifier,
+			configuration: configuration,
+			method: .post,
+			additionalHeaders: additionalHeaders,
+			path: path,
+			queryStringParameters: nil,
+			body: body)
+			.getHTTPResponse(connection: connection)
+	}
+
+	public static func put(
+		identifier: String,
+		configuration: ClientConfiguration,
+		path: String,
+		body: Data?,
+		additionalHeaders: [String:String]? = nil,
+		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		return Request(
+			identifier: identifier,
+			configuration: configuration,
+			method: .put,
+			additionalHeaders: additionalHeaders,
+			path: path,
+			queryStringParameters: nil,
+			body: body)
+			.getHTTPResponse(connection: connection)
 	}
 }

@@ -108,6 +108,16 @@ public enum HTTPMethod {
 
 //: ------------------------
 
+public struct ClientConfiguration {
+	public let scheme: String
+	public let host: String
+	public let port: Int?
+	public let rootPath: String?
+	public let defaultHeaders: [String:String]?
+}
+
+//: ------------------------
+
 public struct Request {
 	public var identifier: String
 	public var urlComponents: URLComponents
@@ -121,6 +131,23 @@ public struct Request {
 		self.method = method
 		self.headers = headers
 		self.body = body
+	}
+
+	public init(identifier: String, configuration: ClientConfiguration, method: HTTPMethod, additionalHeaders: [String:String]?, path: String?, queryStringParameters: AnyDict?, body: Data?) {
+		self.init(
+			identifier: identifier,
+			urlComponents: URLComponents()
+				.resetTo(
+					scheme: configuration.scheme,
+					host: configuration.host,
+					port: configuration.port,
+					rootPath: configuration.rootPath)
+				.append(path: path.get(or: ""))
+				.setQueryString(parameters: queryStringParameters ?? [:]),
+			method: method,
+			headers: configuration.defaultHeaders.get(or: [:])
+				.join(additionalHeaders.get(or: [:])),
+			body: body)
 	}
 
 	public var getConnectionInfo: ConnectionInfo {

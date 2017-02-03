@@ -4,7 +4,7 @@ import JSONObject
 //: ------------------------
 
 public struct Serialize {
-	public static var JSON: (Any) -> Result<Data> {
+	public static var toJSON: (Any) -> Result<Data> {
 		return { object in
 			do {
 				return try .success(JSONSerialization.data(with: JSONObject.with(object)))
@@ -15,7 +15,18 @@ public struct Serialize {
 		}
 	}
 
-	public static var form: (Any) -> Result<Data> {
+	public static var fromJSONObject: (JSONObject) -> Result<Data> {
+		return { object in
+			do {
+				return try .success(JSONSerialization.data(with: object))
+			}
+			catch let error as NSError {
+				return .failure(ClientError.serialization(.toJSON(error)))
+			}
+		}
+	}
+
+	public static var toFormURLEncoded: (Any) -> Result<Data> {
 		return { object in
 			guard let dict = object as? AnyDict else { return .failure(ClientError.serialization(.toFormURLEncoded)) }
 			if let data = wsBodyDataURLEncodedString(dict: dict, rootKey: nil).data(using: String.Encoding.utf8) {
