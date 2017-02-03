@@ -114,6 +114,14 @@ public struct ClientConfiguration {
 	public let port: Int?
 	public let rootPath: String?
 	public let defaultHeaders: [String:String]?
+
+	public init(scheme: String, host: String, port: Int?, rootPath: String?, defaultHeaders: [String:String]?) {
+		self.scheme = scheme
+		self.host = host
+		self.port = port
+		self.rootPath = rootPath
+		self.defaultHeaders = defaultHeaders
+	}
 }
 
 //: ------------------------
