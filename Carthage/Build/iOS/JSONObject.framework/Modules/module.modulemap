@@ -1,0 +1,10 @@
+framework module JSONObject {
+  umbrella header "JSONObject.h"
+
+  export *
+  module * { export * }
+}
+
+module JSONObject.Swift {
+    header "JSONObject-Swift.h"
+}

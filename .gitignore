@@ -1,0 +1,5 @@
+.DS_Store
+*.bcsymbolmap
+Carthage/Checkouts
+Client.xcodeproj/project.xcworkspace/xcuserdata
+Client.xcodeproj/xcuserdata
