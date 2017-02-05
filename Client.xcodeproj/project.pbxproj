@@ -7,8 +7,17 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		38B73A381E4760BB001F3FD7 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38B73A371E4760BB001F3FD7 /* Nimble.framework */; };
+		38B73A3B1E4760D4001F3FD7 /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D2F1E44867A00F4D70C /* Functional.framework */; };
+		38B73A3C1E4760D7001F3FD7 /* JSONObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D301E44867A00F4D70C /* JSONObject.framework */; };
+		38B73A3F1E4760F0001F3FD7 /* Functional.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38ED2D2F1E44867A00F4D70C /* Functional.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		38B73A401E4760F0001F3FD7 /* JSONObject.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38ED2D301E44867A00F4D70C /* JSONObject.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		38B73A411E4760F0001F3FD7 /* SwiftCheck.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38ED2D311E44867A00F4D70C /* SwiftCheck.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		38B73A421E4760F0001F3FD7 /* Nimble.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38B73A371E4760BB001F3FD7 /* Nimble.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		38B73A441E4764FC001F3FD7 /* ConnectionInfoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B73A431E4764FC001F3FD7 /* ConnectionInfoTests.swift */; };
+		38B73A461E47660A001F3FD7 /* TestTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B73A451E47660A001F3FD7 /* TestTools.swift */; };
+		38B73A4A1E4772FB001F3FD7 /* SerializeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38B73A491E4772FB001F3FD7 /* SerializeTests.swift */; };
 		38ED2D1B1E44854100F4D70C /* Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D111E44854100F4D70C /* Client.framework */; };
-		38ED2D201E44854100F4D70C /* ClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ED2D1F1E44854100F4D70C /* ClientTests.swift */; };
 		38ED2D221E44854100F4D70C /* Client.h in Headers */ = {isa = PBXBuildFile; fileRef = 38ED2D141E44854100F4D70C /* Client.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		38ED2D2D1E44864C00F4D70C /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ED2D2C1E44864C00F4D70C /* Types.swift */; };
 		38ED2D321E44867D00F4D70C /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D2F1E44867A00F4D70C /* Functional.framework */; };
@@ -29,12 +38,34 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		38B73A3E1E4760E7001F3FD7 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				38B73A3F1E4760F0001F3FD7 /* Functional.framework in CopyFiles */,
+				38B73A401E4760F0001F3FD7 /* JSONObject.framework in CopyFiles */,
+				38B73A411E4760F0001F3FD7 /* SwiftCheck.framework in CopyFiles */,
+				38B73A421E4760F0001F3FD7 /* Nimble.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		38B73A341E475EFB001F3FD7 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		38B73A351E475EFB001F3FD7 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		38B73A361E475F02001F3FD7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		38B73A371E4760BB001F3FD7 /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		38B73A431E4764FC001F3FD7 /* ConnectionInfoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionInfoTests.swift; sourceTree = "<group>"; };
+		38B73A451E47660A001F3FD7 /* TestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTools.swift; sourceTree = "<group>"; };
+		38B73A491E4772FB001F3FD7 /* SerializeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeTests.swift; sourceTree = "<group>"; };
 		38ED2D111E44854100F4D70C /* Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		38ED2D141E44854100F4D70C /* Client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; };
 		38ED2D151E44854100F4D70C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		38ED2D1A1E44854100F4D70C /* ClientTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ClientTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		38ED2D1F1E44854100F4D70C /* ClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientTests.swift; sourceTree = "<group>"; };
 		38ED2D211E44854100F4D70C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		38ED2D2C1E44864C00F4D70C /* Types.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Types.swift; sourceTree = "<group>"; };
 		38ED2D2F1E44867A00F4D70C /* Functional.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Functional.framework; path = Carthage/Build/iOS/Functional.framework; sourceTree = "<group>"; };
@@ -59,6 +90,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				38B73A3B1E4760D4001F3FD7 /* Functional.framework in Frameworks */,
+				38B73A381E4760BB001F3FD7 /* Nimble.framework in Frameworks */,
+				38B73A3C1E4760D7001F3FD7 /* JSONObject.framework in Frameworks */,
 				38ED2D1B1E44854100F4D70C /* Client.framework in Frameworks */,
 				38ED2D341E44867F00F4D70C /* SwiftCheck.framework in Frameworks */,
 			);
@@ -67,9 +101,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		38B73A331E475EE3001F3FD7 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				38B73A361E475F02001F3FD7 /* README.md */,
+				38B73A341E475EFB001F3FD7 /* Cartfile */,
+				38B73A351E475EFB001F3FD7 /* Cartfile.private */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		38ED2D071E44854100F4D70C = {
 			isa = PBXGroup;
 			children = (
+				38B73A331E475EE3001F3FD7 /* Resources */,
 				38ED2D2E1E44865C00F4D70C /* Libraries */,
 				38ED2D131E44854100F4D70C /* Client */,
 				38ED2D1E1E44854100F4D70C /* ClientTests */,
@@ -102,8 +147,10 @@
 		38ED2D1E1E44854100F4D70C /* ClientTests */ = {
 			isa = PBXGroup;
 			children = (
-				38ED2D1F1E44854100F4D70C /* ClientTests.swift */,
 				38ED2D211E44854100F4D70C /* Info.plist */,
+				38B73A431E4764FC001F3FD7 /* ConnectionInfoTests.swift */,
+				38B73A451E47660A001F3FD7 /* TestTools.swift */,
+				38B73A491E4772FB001F3FD7 /* SerializeTests.swift */,
 			);
 			path = ClientTests;
 			sourceTree = "<group>";
@@ -114,6 +161,7 @@
 				38ED2D2F1E44867A00F4D70C /* Functional.framework */,
 				38ED2D301E44867A00F4D70C /* JSONObject.framework */,
 				38ED2D311E44867A00F4D70C /* SwiftCheck.framework */,
+				38B73A371E4760BB001F3FD7 /* Nimble.framework */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -156,7 +204,7 @@
 			buildPhases = (
 				38ED2D161E44854100F4D70C /* Sources */,
 				38ED2D171E44854100F4D70C /* Frameworks */,
-				38ED2D181E44854100F4D70C /* Resources */,
+				38B73A3E1E4760E7001F3FD7 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -215,13 +263,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		38ED2D181E44854100F4D70C /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -240,7 +281,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38ED2D201E44854100F4D70C /* ClientTests.swift in Sources */,
+				38B73A441E4764FC001F3FD7 /* ConnectionInfoTests.swift in Sources */,
+				38B73A4A1E4772FB001F3FD7 /* SerializeTests.swift in Sources */,
+				38B73A461E47660A001F3FD7 /* TestTools.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -452,6 +495,7 @@
 				38ED2D271E44854100F4D70C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		38ED2D281E44854100F4D70C /* Build configuration list for PBXNativeTarget "ClientTests" */ = {
 			isa = XCConfigurationList;
@@ -460,6 +504,7 @@
 				38ED2D2A1E44854100F4D70C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
