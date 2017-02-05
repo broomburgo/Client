@@ -21,11 +21,12 @@ class SerializeTests: XCTestCase {
 			return gotObject == object
 		}
 
-		property("'fromJSONObject' is invertible"/*, arguments: replayArgs*/) <- forAll { (ao: JSONObject) in
+		
+		property("'fromJSONObject' is invertible", arguments: .with(1414064714,2119139763,98)) <- forAll { (ao: JSONObject) in
 			let object = JSONObject.with(ao.getTopLevel)
 			let data = try! Serialize.fromJSONObject(object).get()
 			let gotObject = (try! JSONSerialization.jsonObject(with: data, options: .allowFragments)) |> JSONObject.with
-			return gotObject == object
+			return gotObject.isEqual(to: object, numberPrecision: 0.1)
 		}
 	}
 }

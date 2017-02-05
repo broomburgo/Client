@@ -96,3 +96,12 @@ extension JSONObject: Arbitrary {
 		return Gen<JSONObject>.one(of: [null,number,bool,string,array,dictionary])
 	}
 }
+
+extension CheckerArguments {
+	static func with(_ left: Int, _ right: Int, _ size: Int) -> CheckerArguments {
+		return CheckerArguments(
+			replay: .some(StdGen(left,right),size))
+	}
+}
+
+
