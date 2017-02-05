@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "EBD3CCCCD357ACFEA86BA05167BC6D04C2018249",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "EBD3CCCCD357ACFEA86BA05167BC6D04C2018249" : 9223372036854775807,
+    "7D718686C5DFBCBAC3490CB212FDD790EB63236E" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "AFE54B55-7DA0-4A15-B027-8C09E931B9DA",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "EBD3CCCCD357ACFEA86BA05167BC6D04C2018249" : "Client\/",
+    "7D718686C5DFBCBAC3490CB212FDD790EB63236E" : "Signals\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "Client",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "Client.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/broomburgo\/Signals.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "7D718686C5DFBCBAC3490CB212FDD790EB63236E"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/broomburgo\/Client.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "EBD3CCCCD357ACFEA86BA05167BC6D04C2018249"
+    }
+  ]
+}

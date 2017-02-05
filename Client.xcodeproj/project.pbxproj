@@ -62,6 +62,8 @@
 		38B73A431E4764FC001F3FD7 /* ConnectionInfoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConnectionInfoTests.swift; sourceTree = "<group>"; };
 		38B73A451E47660A001F3FD7 /* TestTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTools.swift; sourceTree = "<group>"; };
 		38B73A491E4772FB001F3FD7 /* SerializeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SerializeTests.swift; sourceTree = "<group>"; };
+		38B73A4C1E477EE2001F3FD7 /* codecov.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = codecov.yml; sourceTree = "<group>"; };
+		38B73A4D1E47801E001F3FD7 /* .travis.yml */ = {isa = PBXFileReference; lastKnownFileType = text; path = .travis.yml; sourceTree = "<group>"; };
 		38ED2D111E44854100F4D70C /* Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		38ED2D141E44854100F4D70C /* Client.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Client.h; sourceTree = "<group>"; };
 		38ED2D151E44854100F4D70C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -107,6 +109,8 @@
 				38B73A361E475F02001F3FD7 /* README.md */,
 				38B73A341E475EFB001F3FD7 /* Cartfile */,
 				38B73A351E475EFB001F3FD7 /* Cartfile.private */,
+				38B73A4C1E477EE2001F3FD7 /* codecov.yml */,
+				38B73A4D1E47801E001F3FD7 /* .travis.yml */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
