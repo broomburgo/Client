@@ -44,7 +44,7 @@ public struct Parse {
 			}
 		}
 
-		public static func getElement<T>(at path: KeyPath) -> (AnyDict) -> Result<T> {
+		public static func getElement<T>(type: T.Type, at path: KeyPath) -> (AnyDict) -> Result<T> {
 			return { dict in
 				PathTo<T>(in: dict).get(path).run(
 					ifSuccess: { Result.success($0) },
