@@ -293,7 +293,7 @@ public enum ClientError: Error, CustomStringConvertible {
 	case noResponse
 	case invalidHTTPCode(Int)
 	case invalidHeader(String)
-	case noValueInAnyDict(key: String, typeDescription: String)
+	case noValueAtPath(PathError)
 	case noValueInArray(index: Int)
 	case noResults
 	case invalidData(String)
@@ -303,6 +303,7 @@ public enum ClientError: Error, CustomStringConvertible {
 	case unauthorized
 	case serialization(SerializationError)
 	case deserialization(DeserializationError)
+	case undefined(Error)
 
 	public static let errorDomain = "Client"
 	public static let errorInfoKey = "ErrorInfo"
@@ -355,20 +356,40 @@ public enum ClientError: Error, CustomStringConvertible {
 						"InvalidHeaderKey" : headerKey],
 					NSLocalizedDescriptionKey : description])
 
-		case .noValueInAnyDict(let key, let typeDescription):
-			return NSError(
-				domain: ClientError.errorDomain,
-				code: 5,
-				userInfo: [
-					ClientError.errorInfoKey : [
-						"ExpectedKey" : key,
-						"ExpectedType" : typeDescription],
-					NSLocalizedDescriptionKey : description])
+		case .noValueAtPath(let error):
+			switch error {
+			case .emptyPath(_, let path):
+				return NSError(
+					domain: ClientError.errorDomain,
+					code: 5,
+					userInfo: [
+						ClientError.errorInfoKey : [
+							"ExpectedPath" : path.keys],
+						NSLocalizedDescriptionKey : description])
+			case .noDictAtKey(_, let path, let key):
+				return NSError(
+					domain: ClientError.errorDomain,
+					code: 6,
+					userInfo: [
+						ClientError.errorInfoKey : [
+							"ExpectedPath" : path.keys,
+							"ExpectedKey" : key],
+						NSLocalizedDescriptionKey : description])
+			case .noTargetForLastKey(_, let path, let typeDescription):
+				return NSError(
+					domain: ClientError.errorDomain,
+					code: 7,
+					userInfo: [
+						ClientError.errorInfoKey : [
+							"ExpectedPath" : path.keys,
+							"ExpectedType" : typeDescription],
+						NSLocalizedDescriptionKey : description])
+			}
 
 		case .noValueInArray(let index):
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 6,
+				code: 8,
 				userInfo: [
 					ClientError.errorInfoKey : [
 						"ExpectedIndex" : index],
@@ -377,13 +398,13 @@ public enum ClientError: Error, CustomStringConvertible {
 		case .noResults:
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 7,
+				code: 9,
 				userInfo: [NSLocalizedDescriptionKey : description])
 
 		case .invalidData(let dataString):
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 8,
+				code: 10,
 				userInfo: [
 					ClientError.errorInfoKey : [
 						"DataMessage" : dataString],
@@ -392,7 +413,7 @@ public enum ClientError: Error, CustomStringConvertible {
 		case .errorMessage(let message):
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 9,
+				code: 11,
 				userInfo: [
 					ClientError.errorInfoKey : [
 						"ErrorMessage" : message],
@@ -401,7 +422,7 @@ public enum ClientError: Error, CustomStringConvertible {
 		case .errorMessages(let messages):
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 10,
+				code: 12,
 				userInfo: [
 					ClientError.errorInfoKey : [
 						"ErrorMessages" : messages],
@@ -410,7 +431,7 @@ public enum ClientError: Error, CustomStringConvertible {
 		case .errorPlist(let plist):
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 11,
+				code: 13,
 				userInfo: [
 					ClientError.errorInfoKey : [
 						"ErrorPlist" : plist],
@@ -419,7 +440,7 @@ public enum ClientError: Error, CustomStringConvertible {
 		case .unauthorized:
 			return NSError(
 				domain: ClientError.errorDomain,
-				code: 12,
+				code: 14,
 				userInfo: [NSLocalizedDescriptionKey : description])
 
 		case .serialization(let error):
@@ -427,6 +448,9 @@ public enum ClientError: Error, CustomStringConvertible {
 
 		case .deserialization(let error):
 			return error.getNSError
+
+		case .undefined(let error):
+			return NSError(domain: "Undefined", code: 0, userInfo: [NSLocalizedDescriptionKey : error.localizedDescription])
 		}
 	}
 
@@ -446,8 +470,15 @@ public enum ClientError: Error, CustomStringConvertible {
 			return "Invalid HTTP status code: \(statusCode)"
 		case .invalidHeader(let headerKey):
 			return "Invalid header at key: \(headerKey)"
-		case .noValueInAnyDict(let key, let typeDescription):
-			return "No \(typeDescription) found at key: \(key)"
+		case .noValueAtPath(let error):
+			switch error {
+			case .emptyPath:
+				return "Empty path"
+			case .noDictAtKey(_, _, let key):
+				return "No AnyDict found at key: \(key)"
+			case .noTargetForLastKey(_, let path, let typeDescription):
+				return "No \(typeDescription) found at path: \(path.keys)"
+			}
 		case .noValueInArray(let index):
 			return "No value found at index: \(index)"
 		case .noResults:
@@ -466,6 +497,8 @@ public enum ClientError: Error, CustomStringConvertible {
 			return error.description
 		case .deserialization(let error):
 			return error.description
+		case .undefined(let error):
+			return error.localizedDescription
 		}
 	}
 }

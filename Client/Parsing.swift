@@ -44,19 +44,18 @@ public struct Parse {
 			}
 		}
 
-		public static func focusOn<T>(type: T.Type, at key: String) -> (AnyDict) -> Result<T> {
+		public static func getElement<T>(at path: KeyPath) -> (AnyDict) -> Result<T> {
 			return { dict in
-				if let value = dict[key] as? T {
-					return .success(value)
-				} else {
-					return .failure(ClientError.noValueInAnyDict(
-						key: key,
-						typeDescription: "\(T.self)"))
-				}
+				PathTo<T>(in: dict).get(path).run(
+					ifSuccess: { Result.success($0) },
+					ifFailure: {
+						guard let error = $0 as? PathError else { return Result.failure(ClientError.undefined($0)) }
+						return Result.failure(ClientError.noValueAtPath(error))
+				})
 			}
 		}
 
-		public static func focusOnElement<T>(at index: Int) -> ([T]) -> Result<T> {
+		public static func getElement<T>(at index: Int) -> ([T]) -> Result<T> {
 			return { array in
 				if array.indices.contains(index) {
 					return .success(array[index])
