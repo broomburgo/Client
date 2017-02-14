@@ -5,6 +5,10 @@ public typealias Resource<T> = Deferred<Writer<Result<T>,ConnectionInfo>>
 public typealias Response = (optData: Data?, optResponse: URLResponse?, optError: Error?)
 public typealias Connection = (Request) -> Resource<Response>
 
+public func failed<T>(with error: Error) -> Resource<T> {
+	return Deferred(Writer(Result<T>.failure(error)))
+}
+
 //: ------------------------
 
 public struct ConnectionInfo: Monoid {
