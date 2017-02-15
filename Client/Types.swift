@@ -3,7 +3,7 @@ import JSONObject
 
 public typealias Resource<T> = Deferred<Writer<Result<T>,ConnectionInfo>>
 public typealias Response = (optData: Data?, optResponse: URLResponse?, optError: Error?)
-public typealias Connection = (Request) -> Resource<Response>
+public typealias Connection = (URLRequest) -> Resource<Response>
 
 public func failed<T>(with error: Error) -> Resource<T> {
 	return Deferred(Writer(Result<T>.failure(error)))
@@ -48,7 +48,7 @@ public struct ConnectionInfo: Monoid {
 		let requestURLHost: JSONObject? = urlComponents?.host.map(JSONObject.string)
 		let requestURLPort: JSONObject? = urlComponents?.port.map(JSONObject.number)
 		let requestURLPath: JSONObject? = (urlComponents?.path).map(JSONObject.string)
-		let requestURLQueryString: JSONObject? = urlComponents?.scheme.map(JSONObject.string)
+		let requestURLQueryString: JSONObject? = urlComponents?.query.map(JSONObject.string)
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
 		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.joinAll()
@@ -162,15 +162,14 @@ public struct Request {
 			body: body)
 	}
 
-	public var getConnectionInfo: ConnectionInfo {
-		return ConnectionInfo.zero
-			.with { $0.connectionName = self.identifier}
-			.join(ConnectionInfo.zero
-				.with { $0.urlComponents = self.urlComponents})
-	}
+	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> Writer<Result<URLRequest>,ConnectionInfo> {
 
-	public func getURLRequest(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> URLRequest? {
-		guard let url = urlComponents.url else { return nil }
+		let baseWriter = Writer<(),ConnectionInfo>((), ConnectionInfo.zero.with { $0.connectionName = self.identifier}
+			.join(ConnectionInfo.zero.with { $0.urlComponents = self.urlComponents}))
+
+		guard let url = urlComponents.url else {
+			return baseWriter.map { Result.failure(ClientError.request(self.urlComponents))}
+		}
 
 		let m_request = NSMutableURLRequest(
 			url: url,
@@ -180,7 +179,10 @@ public struct Request {
 		m_request.allHTTPHeaderFields = headers
 		m_request.httpBody = body
 
-		return m_request.copy() as? URLRequest
+		let request = m_request.copy() as! URLRequest
+		return baseWriter
+			.tell(ConnectionInfo.zero.with { $0.originalRequest = request })
+			.map { Result.success(request) }
 	}
 }
 

@@ -36,8 +36,7 @@ extension URLComponents {
 
 extension Request {
 	public func getHTTPResponse(connection: @escaping Connection) -> Resource<HTTPResponse> {
-		return Deferred(Writer(Result(self))
-			.tell(getConnectionInfo))
+		return Deferred(getURLRequestWriter())
 			.flatMapTT(connection)
 			.flatMapTT {
 				let optData = $0.optData
