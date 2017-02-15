@@ -30,6 +30,15 @@ public struct Parse {
 				}
 			}
 		}
+
+		public static func getHeader(at key: String) -> (HTTPResponse) -> Result<String> {
+			return { response in
+				guard let
+					header = response.URLResponse.allHeaderFields[key] as? String
+					else { return Result<String>.failure(ClientError.invalidHeader(key)) }
+				return .success(header)
+			}
+		}
 	}
 
 	public struct Output {
