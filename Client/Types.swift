@@ -212,9 +212,18 @@ public struct HTTPResponse {
 
 //: ------------------------
 
-public enum SerializationError: CustomStringConvertible {
+public enum SerializationError: CustomStringConvertible, NSErrorConvertible {
 	case toJSON(NSError)
 	case toFormURLEncoded
+
+	public var description: String {
+		switch self {
+		case .toJSON:
+			return "SerializationError: JSON"
+		case .toFormURLEncoded:
+			return "SerializationError: form-url-encoded"
+		}
+	}
 
 	public static let errorDomain = "Serialization"
 
@@ -229,24 +238,28 @@ public enum SerializationError: CustomStringConvertible {
 				userInfo: [NSLocalizedDescriptionKey :  "Cannot serialize into form-url-encoded"])
 		}
 	}
-
-	public var description: String {
-		switch self {
-		case .toJSON:
-			return "SerializationError: JSON"
-		case .toFormURLEncoded:
-			return "SerializationError: form-url-encoded"
-		}
-	}
 }
 
 //: ------------------------
 
-public enum DeserializationError: CustomStringConvertible {
+public enum DeserializationError: CustomStringConvertible, NSErrorConvertible {
 	case toAny(NSError?)
 	case toAnyDict(NSError?)
 	case toArray(NSError?)
 	case toString
+
+	public var description: String {
+		switch self {
+		case .toAny:
+			return "DeserializationError: toAny"
+		case .toAnyDict:
+			return "DeserializationError: toAnyDict"
+		case .toArray:
+			return "DeserializationError: toArray"
+		case .toString:
+			return "DeserializationError: toString"
+		}
+	}
 
 	public static let errorDomain = "Deserialization"
 
@@ -274,24 +287,11 @@ public enum DeserializationError: CustomStringConvertible {
 				userInfo: [NSLocalizedDescriptionKey : "Cannot deserialize into 'String'"])
 		}
 	}
-
-	public var description: String {
-		switch self {
-		case .toAny:
-			return "DeserializationError: toAny"
-		case .toAnyDict:
-			return "DeserializationError: toAnyDict"
-		case .toArray:
-			return "DeserializationError: toArray"
-		case .toString:
-			return "DeserializationError: toString"
-		}
-	}
 }
 
 //: ------------------------
 
-public enum ClientError: Error, CustomStringConvertible {
+public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 	case generic(NSError)
 	case connection(NSError)
 	case request(URLComponents)
@@ -310,6 +310,47 @@ public enum ClientError: Error, CustomStringConvertible {
 	case serialization(SerializationError)
 	case deserialization(DeserializationError)
 	case undefined(Error)
+
+	public var description: String {
+		switch  self {
+		case .generic(let error):
+			return error.localizedDescription
+		case .connection(let error):
+			return error.localizedDescription
+		case .request:
+			return "Invalid URLComponents"
+		case .noData:
+			return "Received empty data"
+		case .noResponse:
+			return "No response"
+		case .invalidHTTPCode(let statusCode):
+			return "Invalid HTTP status code: \(statusCode)"
+		case .invalidHeader(let headerKey):
+			return "Invalid header at key: \(headerKey)"
+		case .noValueAtPath(let error):
+			return error.description
+		case .noValueInArray(let index):
+			return "No value found at index: \(index)"
+		case .noResults:
+			return "Zero results"
+		case .invalidData:
+			return "Invalid data"
+		case .errorMessage(let message):
+			return message
+		case .errorMessages(let messages):
+			return messages.joinAll(separator: "\n")
+		case .errorPlist:
+			return "Generic error"
+		case .unauthorized:
+			return "Authorization denied"
+		case .serialization(let error):
+			return error.description
+		case .deserialization(let error):
+			return error.description
+		case .undefined(let error):
+			return error.localizedDescription
+		}
+	}
 
 	public static let errorDomain = "Client"
 	public static let errorInfoKey = "ErrorInfo"
@@ -363,34 +404,7 @@ public enum ClientError: Error, CustomStringConvertible {
 					NSLocalizedDescriptionKey : description])
 
 		case .noValueAtPath(let error):
-			switch error {
-			case .emptyPath(_, let path):
-				return NSError(
-					domain: ClientError.errorDomain,
-					code: 5,
-					userInfo: [
-						ClientError.errorInfoKey : [
-							"ExpectedPath" : path.keys],
-						NSLocalizedDescriptionKey : description])
-			case .noDictAtKey(_, let path, let key):
-				return NSError(
-					domain: ClientError.errorDomain,
-					code: 6,
-					userInfo: [
-						ClientError.errorInfoKey : [
-							"ExpectedPath" : path.keys,
-							"ExpectedKey" : key],
-						NSLocalizedDescriptionKey : description])
-			case .noTargetForLastKey(_, let path, let typeDescription):
-				return NSError(
-					domain: ClientError.errorDomain,
-					code: 7,
-					userInfo: [
-						ClientError.errorInfoKey : [
-							"ExpectedPath" : path.keys,
-							"ExpectedType" : typeDescription],
-						NSLocalizedDescriptionKey : description])
-			}
+			return error.getNSError
 
 		case .noValueInArray(let index):
 			return NSError(
@@ -457,54 +471,6 @@ public enum ClientError: Error, CustomStringConvertible {
 
 		case .undefined(let error):
 			return NSError(domain: "Undefined", code: 0, userInfo: [NSLocalizedDescriptionKey : error.localizedDescription])
-		}
-	}
-
-	public var description: String {
-		switch  self {
-		case .generic(let error):
-			return error.localizedDescription
-		case .connection(let error):
-			return error.localizedDescription
-		case .request:
-			return "Invalid URLComponents"
-		case .noData:
-			return "Received empty data"
-		case .noResponse:
-			return "No response"
-		case .invalidHTTPCode(let statusCode):
-			return "Invalid HTTP status code: \(statusCode)"
-		case .invalidHeader(let headerKey):
-			return "Invalid header at key: \(headerKey)"
-		case .noValueAtPath(let error):
-			switch error {
-			case .emptyPath:
-				return "Empty path"
-			case .noDictAtKey(_, _, let key):
-				return "No AnyDict found at key: \(key)"
-			case .noTargetForLastKey(_, let path, let typeDescription):
-				return "No \(typeDescription) found at path: \(path.keys)"
-			}
-		case .noValueInArray(let index):
-			return "No value found at index: \(index)"
-		case .noResults:
-			return "Zero results"
-		case .invalidData:
-			return "Invalid data"
-		case .errorMessage(let message):
-			return message
-		case .errorMessages(let messages):
-			return messages.joinAll(separator: "\n")
-		case .errorPlist:
-			return "Generic error"
-		case .unauthorized:
-			return "Authorization denied"
-		case .serialization(let error):
-			return error.description
-		case .deserialization(let error):
-			return error.description
-		case .undefined(let error):
-			return error.localizedDescription
 		}
 	}
 }
