@@ -21,7 +21,7 @@ public struct Parse {
 			}
 		}
 
-		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401,403]) -> (HTTPResponse) -> Result<HTTPResponse> {
+		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401]) -> (HTTPResponse) -> Result<HTTPResponse> {
 			return { response in
 				if codes.contains(response.URLResponse.statusCode) {
 					return .failure(ClientError.unauthorized)
