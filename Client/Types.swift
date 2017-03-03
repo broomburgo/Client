@@ -207,9 +207,7 @@ public struct HTTPResponse {
 }
 
 //: ------------------------
-
 //MARK: - Errors
-
 //: ------------------------
 
 public enum SerializationError: CustomStringConvertible, NSErrorConvertible {
@@ -369,8 +367,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 0,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"URLComponents" : components],
+					ClientError.errorInfoKey : JSONString.from(["URLComponents" : components.debugDescription]),
 					NSLocalizedDescriptionKey : description])
 
 		case .noData:
@@ -390,8 +387,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 3,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"ReceivedStatusCode" : statusCode],
+					ClientError.errorInfoKey : JSONString.from(["ReceivedStatusCode" : statusCode]),
 					NSLocalizedDescriptionKey : description])
 
 		case .invalidHeader(let headerKey):
@@ -399,8 +395,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 4,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"InvalidHeaderKey" : headerKey],
+					ClientError.errorInfoKey : JSONString.from(["InvalidHeaderKey" : headerKey]),
 					NSLocalizedDescriptionKey : description])
 
 		case .noValueAtPath(let error):
@@ -411,8 +406,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 8,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"ExpectedIndex" : index],
+					ClientError.errorInfoKey : JSONString.from(["ExpectedIndex" : index]),
 					NSLocalizedDescriptionKey : description])
 
 		case .noResults:
@@ -426,8 +420,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 10,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"DataMessage" : dataString],
+					ClientError.errorInfoKey : JSONString.from(["DataMessage" : dataString]),
 					NSLocalizedDescriptionKey : description])
 
 		case .errorMessage(let message):
@@ -435,8 +428,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 11,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"ErrorMessage" : message],
+					ClientError.errorInfoKey : JSONString.from(["ErrorMessage" : message]),
 					NSLocalizedDescriptionKey : description])
 
 		case .errorMessages(let messages):
@@ -444,8 +436,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 12,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"ErrorMessages" : messages],
+					ClientError.errorInfoKey : JSONString.from(["ErrorMessages" : messages]),
 					NSLocalizedDescriptionKey : description])
 
 		case .errorPlist(let plist):
@@ -453,8 +444,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 				domain: ClientError.errorDomain,
 				code: 13,
 				userInfo: [
-					ClientError.errorInfoKey : [
-						"ErrorPlist" : plist],
+					ClientError.errorInfoKey : JSONString.from(["ErrorPlist" : plist]),
 					NSLocalizedDescriptionKey : description])
 
 		case .unauthorized:

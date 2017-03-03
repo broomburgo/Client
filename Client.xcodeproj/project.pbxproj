@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		382AE79F1E6954BA00C8EB0E /* Utilites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382AE79E1E6954BA00C8EB0E /* Utilites.swift */; };
 		38B73A381E4760BB001F3FD7 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38B73A371E4760BB001F3FD7 /* Nimble.framework */; };
 		38B73A3B1E4760D4001F3FD7 /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D2F1E44867A00F4D70C /* Functional.framework */; };
 		38B73A3C1E4760D7001F3FD7 /* JSONObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38ED2D301E44867A00F4D70C /* JSONObject.framework */; };
@@ -55,6 +56,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		382AE79E1E6954BA00C8EB0E /* Utilites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilites.swift; sourceTree = "<group>"; };
 		38B73A341E475EFB001F3FD7 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		38B73A351E475EFB001F3FD7 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		38B73A361E475F02001F3FD7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -140,10 +142,11 @@
 			children = (
 				38ED2D141E44854100F4D70C /* Client.h */,
 				38ED2D151E44854100F4D70C /* Info.plist */,
-				38ED2D2C1E44864C00F4D70C /* Types.swift */,
-				38ED2D351E449BEC00F4D70C /* Serialization.swift */,
-				38ED2D371E449F5400F4D70C /* Parsing.swift */,
 				38ED2D391E44A8CE00F4D70C /* Extensions.swift */,
+				38ED2D371E449F5400F4D70C /* Parsing.swift */,
+				38ED2D351E449BEC00F4D70C /* Serialization.swift */,
+				38ED2D2C1E44864C00F4D70C /* Types.swift */,
+				382AE79E1E6954BA00C8EB0E /* Utilites.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -153,8 +156,8 @@
 			children = (
 				38ED2D211E44854100F4D70C /* Info.plist */,
 				38B73A431E4764FC001F3FD7 /* ConnectionInfoTests.swift */,
-				38B73A451E47660A001F3FD7 /* TestTools.swift */,
 				38B73A491E4772FB001F3FD7 /* SerializeTests.swift */,
+				38B73A451E47660A001F3FD7 /* TestTools.swift */,
 			);
 			path = ClientTests;
 			sourceTree = "<group>";
@@ -274,6 +277,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				382AE79F1E6954BA00C8EB0E /* Utilites.swift in Sources */,
 				38ED2D361E449BEC00F4D70C /* Serialization.swift in Sources */,
 				38ED2D381E449F5400F4D70C /* Parsing.swift in Sources */,
 				38ED2D2D1E44864C00F4D70C /* Types.swift in Sources */,
