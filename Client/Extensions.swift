@@ -41,7 +41,7 @@ extension Request {
 			.flatMapTT {
 				let optData = $0.optData
 				let optResponse = $0.optResponse as? HTTPURLResponse
-				let optError = $0.optError as? NSError
+				let optError = $0.optError as NSError?
 
 				let info = ConnectionInfo.zero.with { $0.serverResponse = optResponse }
 					.join(ConnectionInfo.zero.with { $0.serverOutput = optData })
