@@ -1,4 +1,4 @@
 github "broomburgo/Functional" "04604da494e35ccac96ea23055d8ecfdef2b978e"
 github "Quick/Nimble" "v6.1.0"
-github "typelift/SwiftCheck" "0.7.3"
+github "typelift/SwiftCheck" "0.8.0"
 github "broomburgo/JSONObject" "7fa45b917b75e526c344369b049074b8ecc74e54"
