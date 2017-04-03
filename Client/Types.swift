@@ -33,7 +33,7 @@ public struct ConnectionInfo: Monoid {
 			serverOutput: nil)
 	}
 
-	public func join (_ other: ConnectionInfo) -> ConnectionInfo {
+	public func compose (_ other: ConnectionInfo) -> ConnectionInfo {
 		return ConnectionInfo(
 			connectionName: other.connectionName ?? connectionName,
 			urlComponents: other.urlComponents ?? urlComponents,
@@ -51,7 +51,7 @@ public struct ConnectionInfo: Monoid {
 		let requestURLQueryString: JSONObject? = urlComponents?.query.map(JSONObject.string)
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
-		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.joinAll()
+		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.composeAll()
 		let requestBody: JSONObject? = (originalRequest?.httpBody)
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
@@ -62,7 +62,7 @@ public struct ConnectionInfo: Monoid {
 				guard let key = key.base as? String else { return JSONObject.null }
 				return JSONObject.dict([key : .with(value)])
 			}
-			.joinAll()
+			.composeAll()
 		let responseBody: JSONObject? = serverOutput
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
@@ -158,14 +158,14 @@ public struct Request {
 				.setQueryString(parameters: queryStringParameters ?? [:]),
 			method: method,
 			headers: configuration.defaultHeaders.get(or: [:])
-				.join(additionalHeaders.get(or: [:])),
+				.compose(additionalHeaders.get(or: [:])),
 			body: body)
 	}
 
 	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> Writer<Result<URLRequest>,ConnectionInfo> {
 
 		let baseWriter = Writer<(),ConnectionInfo>((), ConnectionInfo.zero.with { $0.connectionName = self.identifier}
-			.join(ConnectionInfo.zero.with { $0.urlComponents = self.urlComponents}))
+			.compose(ConnectionInfo.zero.with { $0.urlComponents = self.urlComponents}))
 
 		guard let url = urlComponents.url else {
 			return baseWriter.map { Result.failure(ClientError.request(self.urlComponents))}
@@ -336,7 +336,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 		case .errorMessage(let message):
 			return message
 		case .errorMessages(let messages):
-			return messages.joinAll(separator: "\n")
+			return messages.composeAll(separator: "\n")
 		case .errorPlist:
 			return "Generic error"
 		case .unauthorized:

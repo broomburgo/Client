@@ -44,7 +44,7 @@ extension Request {
 				let optError = $0.optError as NSError?
 
 				let info = ConnectionInfo.zero.with { $0.serverResponse = optResponse }
-					.join(ConnectionInfo.zero.with { $0.serverOutput = optData })
+					.compose(ConnectionInfo.zero.with { $0.serverOutput = optData })
 
 				if let error = optError {
 					return Deferred(Writer(

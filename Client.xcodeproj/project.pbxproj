@@ -105,7 +105,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		38B73A331E475EE3001F3FD7 /* Resources */ = {
+		38B73A331E475EE3001F3FD7 /* Docs */ = {
 			isa = PBXGroup;
 			children = (
 				38B73A361E475F02001F3FD7 /* README.md */,
@@ -114,13 +114,13 @@
 				38B73A4C1E477EE2001F3FD7 /* codecov.yml */,
 				38B73A4D1E47801E001F3FD7 /* .travis.yml */,
 			);
-			name = Resources;
+			name = Docs;
 			sourceTree = "<group>";
 		};
 		38ED2D071E44854100F4D70C = {
 			isa = PBXGroup;
 			children = (
-				38B73A331E475EE3001F3FD7 /* Resources */,
+				38B73A331E475EE3001F3FD7 /* Docs */,
 				38ED2D2E1E44865C00F4D70C /* Libraries */,
 				38ED2D131E44854100F4D70C /* Client */,
 				38ED2D1E1E44854100F4D70C /* ClientTests */,
