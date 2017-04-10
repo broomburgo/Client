@@ -42,7 +42,7 @@ public struct Parse {
 	}
 
 	public struct Output {
-		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> Result<OutputType>) -> (OutputType) -> Result<OutputType> {
+		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> Result<CheckedType>) -> (OutputType) -> Result<OutputType> {
 			return { output in
 				switch errorStrategy(getCheckedType(output)) {
 				case let .failure(error):
