@@ -42,15 +42,19 @@ public struct Parse {
 	}
 
 	public struct Output {
-		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> Result<OutputType>) -> (OutputType) -> Result<OutputType> {
+		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> Result<OutputType>) -> (OutputType) -> Result<OutputType> {
 			return { output in
-				switch errorStrategy(output) {
+				switch errorStrategy(getCheckedType(output)) {
 				case let .failure(error):
 					return .failure(error)
 				case .success:
 					return .success(output)
 				}
 			}
+		}
+
+		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> Result<OutputType>) -> (OutputType) -> Result<OutputType> {
+			return check(at: identity, errorStrategy: errorStrategy)
 		}
 
 		public static func getElement<T>(type: T.Type, at path: KeyPath) -> (AnyDict) -> Result<T> {
