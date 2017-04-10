@@ -316,31 +316,31 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 		case .connection(let error):
 			return error.localizedDescription
 		case .request:
-			return "Invalid URLComponents"
+			return "URLComponents non validi"
 		case .noData:
-			return "Received empty data"
+			return "Ricevuti dati vuoti"
 		case .noResponse:
-			return "No response"
+			return "Nessuna risposta"
 		case .invalidHTTPCode(let statusCode):
-			return "Invalid HTTP status code: \(statusCode)"
+			return "Codice HTTP non valido: \(statusCode)"
 		case .invalidHeader(let headerKey):
-			return "Invalid header at key: \(headerKey)"
+			return "Header non valido alla chiave: \(headerKey)"
 		case .noValueAtPath(let error):
 			return error.description
 		case .noValueInArray(let index):
-			return "No value found at index: \(index)"
+			return "Nessun valore trovato all'indice: \(index)"
 		case .noResults:
-			return "Zero results"
+			return "Nessun risultato"
 		case .invalidData:
-			return "Invalid data"
+			return "Dati non validi"
 		case .errorMessage(let message):
 			return message
 		case .errorMessages(let messages):
 			return messages.composeAll(separator: "\n")
 		case .errorPlist:
-			return "Generic error"
+			return "Errore generico"
 		case .unauthorized:
-			return "Authorization denied"
+			return "Autorizzazione negata"
 		case .serialization(let error):
 			return error.description
 		case .deserialization(let error):
