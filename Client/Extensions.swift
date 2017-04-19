@@ -43,10 +43,11 @@ extension Request {
 				let optResponse = $0.optResponse as? HTTPURLResponse
 				let optError = $0.optError as NSError?
 
-				let empty = ConnectionInfo.zero
-				let info = empty.with { $0.serverResponse = optResponse }
-					.compose(empty.with { $0.serverOutput = optData })
-					.compose(empty.with { $0.connectionError = optError })
+				let info = ConnectionInfo.zero.with {
+					$0.connectionError = optError
+					$0.serverResponse = optResponse
+					$0.serverOutput = optData
+				}
 
 				if let error = optError {
 					return Deferred(Writer(

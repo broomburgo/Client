@@ -15,9 +15,9 @@ public struct ConnectionInfo: Monoid {
 	public var connectionName: String?
 	public var urlComponents: URLComponents?
 	public var originalRequest: URLRequest?
+	public var connectionError: NSError?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
-	public var connectionError: NSError?
 
 	public func with(transform: (inout ConnectionInfo) -> ()) -> ConnectionInfo {
 		var m_self = self
@@ -30,9 +30,9 @@ public struct ConnectionInfo: Monoid {
 			connectionName: nil,
 			urlComponents: nil,
 			originalRequest: nil,
+			connectionError: nil,
 			serverResponse: nil,
-			serverOutput: nil,
-			connectionError: nil)
+			serverOutput: nil)
 	}
 
 	public func compose (_ other: ConnectionInfo) -> ConnectionInfo {
@@ -40,9 +40,9 @@ public struct ConnectionInfo: Monoid {
 			connectionName: other.connectionName ?? connectionName,
 			urlComponents: other.urlComponents ?? urlComponents,
 			originalRequest: other.originalRequest ?? originalRequest,
+			connectionError: other.connectionError ?? connectionError,
 			serverResponse: other.serverResponse ?? serverResponse,
-			serverOutput: other.serverOutput ?? serverOutput,
-			connectionError: other.connectionError ?? connectionError)
+			serverOutput: other.serverOutput ?? serverOutput)
 	}
 
 	public var getJSONObject: JSONObject {
@@ -59,6 +59,11 @@ public struct ConnectionInfo: Monoid {
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
 		}
+		let connError: JSONObject? = connectionError.map { JSONObject.dict([
+			"Code" : .number($0.code),
+			"Domain" : .string($0.domain),
+			"UserInfo" : .with($0.userInfo)])
+		}
 		let responseStatusCode: JSONObject? = (serverResponse?.statusCode).map(JSONObject.number)
 		let responseHTTPHeaders: JSONObject? = serverResponse?.allHeaderFields
 			.map { (key: AnyHashable, value: Any) -> JSONObject in
@@ -70,7 +75,6 @@ public struct ConnectionInfo: Monoid {
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
 		}
-		let connError: JSONObject? = connectionError.map { JSONObject.string($0.debugDescription) }
 
 		return JSONObject.array([
 			.dict(["Connection Name" : connName.get(or: .null)]),
@@ -83,10 +87,10 @@ public struct ConnectionInfo: Monoid {
 			.dict(["Request HTTP Method" : requestHTTPMethod.get(or: .null)]),
 			.dict(["Request HTTP Headers" : requestHTTPHeaders.get(or: .null)]),
 			.dict(["Request Body" : requestBody.get(or: .null)]),
+			.dict(["Connection Error" : connError.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
-			.dict(["Response Body" : responseBody.get(or: .null)]),
-			.dict(["Connection Error" : connError.get(or: .null)])])
+			.dict(["Response Body" : responseBody.get(or: .null)])])
 	}
 }
 
