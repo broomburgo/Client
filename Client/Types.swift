@@ -17,6 +17,7 @@ public struct ConnectionInfo: Monoid {
 	public var originalRequest: URLRequest?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
+	public var connectionError: NSError?
 
 	public func with(transform: (inout ConnectionInfo) -> ()) -> ConnectionInfo {
 		var m_self = self
@@ -30,7 +31,8 @@ public struct ConnectionInfo: Monoid {
 			urlComponents: nil,
 			originalRequest: nil,
 			serverResponse: nil,
-			serverOutput: nil)
+			serverOutput: nil,
+			connectionError: nil)
 	}
 
 	public func compose (_ other: ConnectionInfo) -> ConnectionInfo {
@@ -39,7 +41,8 @@ public struct ConnectionInfo: Monoid {
 			urlComponents: other.urlComponents ?? urlComponents,
 			originalRequest: other.originalRequest ?? originalRequest,
 			serverResponse: other.serverResponse ?? serverResponse,
-			serverOutput: other.serverOutput ?? serverOutput)
+			serverOutput: other.serverOutput ?? serverOutput,
+			connectionError: other.connectionError ?? connectionError)
 	}
 
 	public var getJSONObject: JSONObject {
@@ -67,6 +70,7 @@ public struct ConnectionInfo: Monoid {
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
 		}
+		let connError: JSONObject? = connectionError.map { JSONObject.string($0.debugDescription) }
 
 		return JSONObject.array([
 			.dict(["Connection Name" : connName.get(or: .null)]),
@@ -81,7 +85,8 @@ public struct ConnectionInfo: Monoid {
 			.dict(["Request Body" : requestBody.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
-			.dict(["Response Body" : responseBody.get(or: .null)])])
+			.dict(["Response Body" : responseBody.get(or: .null)]),
+			.dict(["Connection Error" : connError.get(or: .null)])])
 	}
 }
 
