@@ -38,6 +38,10 @@ public struct Multipart {
 		return ["Content-Type" : "multipart/form-data; boundary=\(boundary)"]
 	}
 
+	public var inspect: (boundary: String, parts: [Part]) {
+		return (boundary: boundary, parts: parts)
+	}
+
 	public func getData() throws -> Data {
 		guard parts.count > 0 else { return Data() }
 
