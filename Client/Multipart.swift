@@ -63,7 +63,12 @@ public struct Multipart {
 			public var name: String
 			public var content: String
 
-			func getData() throws -> Data {
+			public init(name: String, content: String) {
+				self.name = name
+				self.content = content
+			}
+
+			public func getData() throws -> Data {
 				let fullDataString = "Content-Disposition: form-data; name=\"\(name)\"\n\n\(content)"
 				guard let fullData = fullDataString.data(using: .utf8) else {
 					throw NSError(
@@ -80,7 +85,13 @@ public struct Multipart {
 			public var contentType: String
 			public var data: Data
 
-			func getData() throws -> Data {
+			public init(name: String, contentType: String, data: Data) {
+				self.name = name
+				self.contentType = contentType
+				self.data = data
+			}
+
+			public func getData() throws -> Data {
 				let headerDataString = "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\"\nContent-Type: \(contentType)\n\n"
 				guard
 					let headerData = headerDataString.data(using: .utf8) else {

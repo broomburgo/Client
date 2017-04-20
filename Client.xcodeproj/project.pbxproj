@@ -147,11 +147,11 @@
 				38ED2D141E44854100F4D70C /* Client.h */,
 				38ED2D151E44854100F4D70C /* Info.plist */,
 				38ED2D391E44A8CE00F4D70C /* Extensions.swift */,
+				380BDF351EA8BB3E00207066 /* Multipart.swift */,
 				38ED2D371E449F5400F4D70C /* Parsing.swift */,
 				38ED2D351E449BEC00F4D70C /* Serialization.swift */,
 				38ED2D2C1E44864C00F4D70C /* Types.swift */,
 				382AE79E1E6954BA00C8EB0E /* Utilites.swift */,
-				380BDF351EA8BB3E00207066 /* Multipart.swift */,
 			);
 			path = Client;
 			sourceTree = "<group>";

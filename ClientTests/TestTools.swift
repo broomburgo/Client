@@ -2,7 +2,7 @@ import Foundation
 import SwiftCheck
 import Functional
 import JSONObject
-@testable import Client
+import Client
 
 struct URLStringGenerator {
 	static var get: Gen<String> {
