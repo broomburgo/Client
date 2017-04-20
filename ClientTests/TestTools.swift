@@ -1,8 +1,8 @@
 import Foundation
 import SwiftCheck
-import Client
 import Functional
 import JSONObject
+@testable import Client
 
 struct URLStringGenerator {
 	static var get: Gen<String> {
@@ -104,4 +104,49 @@ extension CheckerArguments {
 	}
 }
 
+extension Multipart.Part.Text: Arbitrary {
+	public static var arbitrary: Gen<Multipart.Part.Text> {
+		return Gen<Multipart.Part.Text>.compose {
+			Multipart.Part.Text(
+				name: $0.generate(),
+				content: $0.generate())
+		}
+	}
+}
 
+extension Multipart.Part.File: Arbitrary {
+	public static var arbitrary: Gen<Multipart.Part.File> {
+		return Gen<Multipart.Part.File>.compose {
+			Multipart.Part.File(
+				name: $0.generate(),
+				contentType: $0.generate(),
+				data: $0.generate(using: String.arbitrary
+					.map { $0.data(using: .utf8)! }))
+		}
+	}
+}
+
+extension Multipart.Part: Arbitrary {
+	public static var arbitrary: Gen<Multipart.Part> {
+		return Gen<Int>.fromElements(of: [0,1]).flatMap {
+			switch $0 {
+			case 0:
+				return Multipart.Part.Text.arbitrary.map(Multipart.Part.text)
+			case 1:
+				return Multipart.Part.File.arbitrary.map(Multipart.Part.file)
+			default:
+				fatalError()
+			}
+		}
+	}
+}
+
+extension Multipart: Arbitrary {
+	public static var arbitrary: Gen<Multipart> {
+		return Gen<Multipart>.compose {
+			try! Multipart(
+				boundary: $0.generate(),
+				parts: $0.generate(using: ArrayOf<Multipart.Part>.arbitrary.map { $0.getArray }))
+		}
+	}
+}
