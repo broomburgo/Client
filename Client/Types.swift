@@ -9,6 +9,15 @@ public func failed<T>(with error: Error) -> Resource<T> {
 	return Deferred(Writer(Result<T>.failure(error)))
 }
 
+public func failable<T>(from closure: () throws -> Resource<T>) -> Resource<T> {
+	do {
+		return try closure()
+	}
+	catch let error {
+		return failed(with: error)
+	}
+}
+
 //: ------------------------
 
 public struct ConnectionInfo: Monoid {
