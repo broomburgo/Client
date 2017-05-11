@@ -64,10 +64,11 @@ public struct ConnectionInfo: Monoid {
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
 		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.composeAll()
-		let requestBody: JSONObject? = (originalRequest?.httpBody)
+		let requestBodyStringRepresentation: JSONObject? = (originalRequest?.httpBody)
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
 		}
+		let requestBodyByteLength: JSONObject? = originalRequest?.httpBody.map { $0.count }.map(JSONObject.number)
 		let connError: JSONObject? = connectionError.map { JSONObject.dict([
 			"Code" : .number($0.code),
 			"Domain" : .string($0.domain),
@@ -95,7 +96,8 @@ public struct ConnectionInfo: Monoid {
 			.dict(["Request URL Full String" : requestURLFullString.get(or: .null)]),
 			.dict(["Request HTTP Method" : requestHTTPMethod.get(or: .null)]),
 			.dict(["Request HTTP Headers" : requestHTTPHeaders.get(or: .null)]),
-			.dict(["Request Body" : requestBody.get(or: .null)]),
+			.dict(["Request Body String Representation" : requestBodyStringRepresentation.get(or: .null)]),
+			.dict(["Request Body Byte Length" : requestBodyByteLength.get(or: .null)]),
 			.dict(["Connection Error" : connError.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
