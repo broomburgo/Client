@@ -128,7 +128,7 @@ extension Multipart.Part: Arbitrary {
 extension Multipart: Arbitrary {
 	public static var arbitrary: Gen<Multipart> {
 		return Gen<Multipart>.compose {
-			try! Multipart(
+			Multipart(
 				boundary: $0.generate(),
 				parts: $0.generate(using: ArrayOf<Multipart.Part>.arbitrary.map { $0.getArray }))
 		}

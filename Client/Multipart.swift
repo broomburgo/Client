@@ -13,16 +13,10 @@ public struct Multipart {
 		self.parts = parts
 	}
 
-	public init(boundary: String, parts: [Part] = []) throws {
-		guard let boundaryData = boundary.data(using: .utf8) else {
-			throw NSError(
-				domain: Multipart.errorDomain,
-				code: 0,
-				userInfo: [NSLocalizedDescriptionKey : "Cannot generate boundary data from \(boundary)"])
-		}
+	public init(boundary: String, parts: [Part] = []) {
 		self.init(
 			boundary: boundary,
-			boundaryData: boundaryData,
+			boundaryData: boundary.data(using: .utf8)!,
 			parts: parts)
 	}
 

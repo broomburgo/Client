@@ -7,7 +7,7 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectBoundaryData() {
 		property("Multipart always generates correct boundaryData from a string") <- forAll { (boundary: String) in
-			let multipart = try! Multipart(boundary: boundary)
+			let multipart = Multipart(boundary: boundary)
 			let expectedData = boundary.data(using: .utf8)!
 			return multipart.boundaryData == expectedData
 		}
@@ -15,7 +15,7 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectHeader() {
 		property("Multipart generates correct ContentType header from boundary") <- forAll { (boundary: String) in
-			let multipart = try! Multipart(boundary: boundary)
+			let multipart = Multipart(boundary: boundary)
 			let expectedContentType = "multipart/form-data; boundary=\(boundary)"
 			let generatedContentType = multipart.headers["Content-Type"]!
 			return generatedContentType == expectedContentType
@@ -24,7 +24,7 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectPartsCountAppending() {
 
-		let x0 = try! Multipart(boundary: "boundary")
+		let x0 = Multipart(boundary: "boundary")
 
 		expect(x0.parts.count).to(equal(0))
 
