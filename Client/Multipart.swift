@@ -2,7 +2,8 @@ import Foundation
 
 public struct Multipart {
 	public static let errorDomain = "Client.Multipart"
-	let newLineData = "\n".data(using: .utf8)!
+	static let newLineCharacter = "\r\n"
+	static let newLineData = newLineCharacter.data(using: .utf8)!
 
 	var boundary: String
 	var boundaryData: Data
@@ -38,14 +39,18 @@ public struct Multipart {
 	public var stringRepresentation: String {
 		guard parts.count > 0 else { return "" }
 
-		let elements = [boundary] + parts.map { "\n" + $0.stringRepresentation + "\n" + boundary }
+		let elements = [boundary] + parts.map { Multipart.newLineCharacter + $0.stringRepresentation + Multipart.newLineCharacter + boundary }
 		return elements.reduce("", +)
 	}
 
 	public func getData() throws -> Data {
 		guard parts.count > 0 else { return Data() }
 
-		let elements = [boundaryData] + (try parts.map { newLineData + (try $0.getData()) + newLineData + boundaryData })
+		let elements = [boundaryData] + (try parts.map {
+			Multipart.newLineData
+				+ (try $0.getData())
+				+ Multipart.newLineData
+				+ boundaryData })
 		return elements.reduce(Data()) { var m_data = $0; m_data.append($1); return m_data }
 	}
 
@@ -96,7 +101,9 @@ public struct Multipart {
 			}
 
 			private var headerDataString: String {
-				return "Content-Disposition: form-data; name=\"\(name)\"\n\n"
+				return "Content-Disposition: form-data; name=\"\(name)\""
+					+ Multipart.newLineCharacter
+					+ Multipart.newLineCharacter
 			}
 		}
 
@@ -129,7 +136,11 @@ public struct Multipart {
 			}
 
 			private var headerDataString: String {
-				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\"\nContent-Type: \(contentType)\n\n"
+				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\""
+					+ Multipart.newLineCharacter
+					+ "Content-Type: \(contentType)"
+					+ Multipart.newLineCharacter
+					+ Multipart.newLineCharacter
 			}
 		}
 	}

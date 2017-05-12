@@ -42,7 +42,7 @@ class MultipartTests: XCTestCase {
 	func testCorrectTextPartDataGeneration() {
 		property("Multipart.Part.Text always generates the correct data") <- forAll { (part: Multipart.Part.Text) in
 			let expectedNameString = "name=\"\(part.name)\""
-			let expectedContentString = "\n\n\(part.content)"
+			let expectedContentString = "\r\n\r\n\(part.content)"
 			let dataString = String(data: try! part.getData(), encoding: .utf8)!
 
 			return dataString.contains(expectedNameString)
@@ -54,7 +54,7 @@ class MultipartTests: XCTestCase {
 		property("Multipart.Part.File always generates the correct data") <- forAll { (part: Multipart.Part.File) in
 			let expectedNameString = "name=\"\(part.name)\""
 			let expectedContentTypeString = "Content-Type: \(part.contentType)"
-			let expectedDataString = "\n\n" + String(data: part.data, encoding: .utf8)!
+			let expectedDataString = "\r\n\r\n" + String(data: part.data, encoding: .utf8)!
 			let dataString = String(data: try! part.getData(), encoding: .utf8)!
 
 			return dataString.contains(expectedNameString)
