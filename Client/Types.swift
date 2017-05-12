@@ -20,10 +20,11 @@ public func failable<T>(from closure: () throws -> Resource<T>) -> Resource<T> {
 
 //: ------------------------
 
-public struct ConnectionInfo: Monoid {
+public struct ConnectionInfo: Monoid, Equatable {
 	public var connectionName: String?
 	public var urlComponents: URLComponents?
 	public var originalRequest: URLRequest?
+	public var bodyStringRepresentation: String?
 	public var connectionError: NSError?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
@@ -39,6 +40,7 @@ public struct ConnectionInfo: Monoid {
 			connectionName: nil,
 			urlComponents: nil,
 			originalRequest: nil,
+			bodyStringRepresentation: nil,
 			connectionError: nil,
 			serverResponse: nil,
 			serverOutput: nil)
@@ -49,9 +51,19 @@ public struct ConnectionInfo: Monoid {
 			connectionName: other.connectionName ?? connectionName,
 			urlComponents: other.urlComponents ?? urlComponents,
 			originalRequest: other.originalRequest ?? originalRequest,
+			bodyStringRepresentation: other.bodyStringRepresentation ?? bodyStringRepresentation,
 			connectionError: other.connectionError ?? connectionError,
 			serverResponse: other.serverResponse ?? serverResponse,
 			serverOutput: other.serverOutput ?? serverOutput)
+	}
+
+	public static func == (left: ConnectionInfo, right: ConnectionInfo) -> Bool {
+		return left.connectionName == right.connectionName
+			&& left.urlComponents == right.urlComponents
+			&& left.originalRequest == right.originalRequest
+			&& left.bodyStringRepresentation == right.bodyStringRepresentation
+			&& left.serverResponse == right.serverResponse
+			&& left.serverOutput == right.serverOutput
 	}
 
 	public var getJSONObject: JSONObject {
@@ -64,10 +76,9 @@ public struct ConnectionInfo: Monoid {
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
 		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.composeAll()
-		let requestBodyStringRepresentation: JSONObject? = (originalRequest?.httpBody)
-			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
-				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
-		}
+		let requestBodyStringRepresentation: JSONObject? = bodyStringRepresentation.map(JSONObject.string)
+			?? (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
+			?? (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
 		let requestBodyByteLength: JSONObject? = originalRequest?.httpBody.map { $0.count }.map(JSONObject.number)
 		let connError: JSONObject? = connectionError.map { JSONObject.dict([
 			"Code" : .number($0.code),

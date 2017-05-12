@@ -2,7 +2,7 @@ import Foundation
 import SwiftCheck
 import Functional
 import JSONObject
-import Client
+@testable import Client
 
 struct URLStringGenerator {
 	static var get: Gen<String> {
@@ -21,16 +21,6 @@ struct URLStringGenerator {
 	}
 }
 
-extension ConnectionInfo {
-	func isEqual(to other: ConnectionInfo) -> Bool {
-		return connectionName == other.connectionName &&
-			urlComponents == other.urlComponents &&
-			originalRequest == other.originalRequest &&
-			serverResponse == other.serverResponse &&
-			serverOutput == other.serverOutput
-	}
-}
-
 extension Gen where A: OptionalType, A.ElementType: Arbitrary {
 	var flip: Gen<OptionalOf<A.ElementType>> {
 		return map { $0.run(
@@ -42,21 +32,15 @@ extension Gen where A: OptionalType, A.ElementType: Arbitrary {
 
 extension ConnectionInfo: Arbitrary {
 	public static var arbitrary: Gen<ConnectionInfo> {
-		return Gen<ConnectionInfo>.zip(
-			OptionalOf<String>.arbitrary,
-			URLStringGenerator.get.map(URLComponents.init),
-			URLStringGenerator.get.map { URL(string: $0).map { URLRequest(url: $0) } },
-			URLStringGenerator.get.map { URL(string: $0).map { HTTPURLResponse(url: $0, mimeType: nil, expectedContentLength: 0, textEncodingName: nil) } },
-			OptionalOf<String>.arbitrary.map { $0.getOptional.flatMap { $0.data(using: .utf8, allowLossyConversion: true) }})
-			.map { (oos, ouc, oureq, oures, od) in
-				let os = oos.getOptional
-				var info = ConnectionInfo.zero
-				info.connectionName = os
-				info.urlComponents = ouc
-				info.originalRequest = oureq
-				info.serverResponse = oures
-				info.serverOutput = od
-				return info
+		return Gen<ConnectionInfo>.compose {
+			ConnectionInfo(
+				connectionName: $0.generate(),
+				urlComponents: $0.generate(using: URLStringGenerator.get.map(URLComponents.init)),
+				originalRequest: $0.generate(using: URLStringGenerator.get.map { URL(string: $0).map { URLRequest(url: $0) } }),
+				bodyStringRepresentation: $0.generate(),
+				connectionError: NSError(domain: $0.generate(), code: $0.generate(), userInfo: nil),
+				serverResponse: $0.generate(using: URLStringGenerator.get.map { URL(string: $0).map { HTTPURLResponse(url: $0, mimeType: nil, expectedContentLength: 0, textEncodingName: nil) } }),
+				serverOutput: $0.generate(using: OptionalOf<String>.arbitrary.map { $0.getOptional.flatMap { $0.data(using: .utf8, allowLossyConversion: true) }}))
 		}
 	}
 }

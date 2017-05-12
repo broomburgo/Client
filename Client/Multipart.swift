@@ -1,7 +1,6 @@
 import Foundation
 
 public struct Multipart {
-
 	public static let errorDomain = "Client.Multipart"
 	let newLineData = "\n".data(using: .utf8)!
 
@@ -42,6 +41,13 @@ public struct Multipart {
 		return (boundary: boundary, parts: parts)
 	}
 
+	public var stringRepresentation: String {
+		guard parts.count > 0 else { return "" }
+
+		let elements = [boundary] + parts.map { "\n" + $0.stringRepresentation + "\n" + boundary }
+		return elements.reduce("", +)
+	}
+
 	public func getData() throws -> Data {
 		guard parts.count > 0 else { return Data() }
 
@@ -50,9 +56,17 @@ public struct Multipart {
 	}
 
 	public enum Part {
-
 		case text(Text)
 		case file(File)
+
+		public var stringRepresentation: String {
+			switch self {
+			case .text(let value):
+				return value.stringRepresentation
+			case .file(let value):
+				return value.stringRepresentation
+			}
+		}
 
 		public func getData() throws -> Data {
 			switch self {
@@ -72,8 +86,12 @@ public struct Multipart {
 				self.content = content
 			}
 
+			public var stringRepresentation: String {
+				return headerDataString + content
+			}
+
 			public func getData() throws -> Data {
-				let fullDataString = "Content-Disposition: form-data; name=\"\(name)\"\n\n\(content)"
+				let fullDataString = headerDataString + content
 				guard let fullData = fullDataString.data(using: .utf8) else {
 					throw NSError(
 						domain: Multipart.errorDomain,
@@ -81,6 +99,10 @@ public struct Multipart {
 						userInfo: [NSLocalizedDescriptionKey : "Cannot generate Text full data from \(self)"])
 				}
 				return fullData
+			}
+
+			private var headerDataString: String {
+				return "Content-Disposition: form-data; name=\"\(name)\"\n\n"
 			}
 		}
 
@@ -95,8 +117,11 @@ public struct Multipart {
 				self.data = data
 			}
 
+			public var stringRepresentation: String {
+				return headerDataString + "Data with byte count: \(data.count)"
+			}
+
 			public func getData() throws -> Data {
-				let headerDataString = "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\"\nContent-Type: \(contentType)\n\n"
 				guard
 					let headerData = headerDataString.data(using: .utf8) else {
 					throw NSError(
@@ -107,6 +132,10 @@ public struct Multipart {
 				var fullData = headerData
 				fullData.append(data)
 				return fullData
+			}
+
+			private var headerDataString: String {
+				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\"\nContent-Type: \(contentType)\n\n"
 			}
 		}
 	}
