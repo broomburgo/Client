@@ -2,29 +2,35 @@ import Foundation
 
 public struct Multipart {
 	public static let errorDomain = "Client.Multipart"
-	static let newLineCharacter = "\r\n"
-	static let newLineData = newLineCharacter.data(using: .utf8)!
+	static let newLineString = "\r\n"
+	static let newLineData = newLineString.data(using: .utf8)!
+	static let preBoundaryString = "--"
 
 	var boundary: String
-	var boundaryData: Data
+	var contentBoundary: String
+	var contentBoundaryData: Data
 	var parts: [Part]
-	private init(boundary: String, boundaryData: Data, parts: [Part]) {
+	private init(boundary: String, contentBoundary: String, contentBoundaryData: Data, parts: [Part]) {
 		self.boundary = boundary
-		self.boundaryData = boundaryData
+		self.contentBoundary = contentBoundary
+		self.contentBoundaryData = contentBoundaryData
 		self.parts = parts
 	}
 
 	public init(boundary: String, parts: [Part] = []) {
+		let contentBoundary = Multipart.preBoundaryString + boundary
 		self.init(
 			boundary: boundary,
-			boundaryData: boundary.data(using: .utf8)!,
+			contentBoundary: contentBoundary,
+			contentBoundaryData: contentBoundary.data(using: .utf8)!,
 			parts: parts)
 	}
 
 	public func adding(part: Part) -> Multipart {
 		return Multipart(
 			boundary: boundary,
-			boundaryData: boundaryData,
+			contentBoundary: contentBoundary,
+			contentBoundaryData: contentBoundaryData,
 			parts: parts + [part])
 	}
 
@@ -39,18 +45,18 @@ public struct Multipart {
 	public var stringRepresentation: String {
 		guard parts.count > 0 else { return "" }
 
-		let elements = [boundary] + parts.map { Multipart.newLineCharacter + $0.stringRepresentation + Multipart.newLineCharacter + boundary }
+		let elements = [contentBoundary] + parts.map { Multipart.newLineString + $0.stringRepresentation + Multipart.newLineString + contentBoundary }
 		return elements.reduce("", +)
 	}
 
 	public func getData() throws -> Data {
 		guard parts.count > 0 else { return Data() }
 
-		let elements = [boundaryData] + (try parts.map {
+		let elements = [contentBoundaryData] + (try parts.map {
 			Multipart.newLineData
 				+ (try $0.getData())
 				+ Multipart.newLineData
-				+ boundaryData })
+				+ contentBoundaryData })
 		return elements.reduce(Data()) { var m_data = $0; m_data.append($1); return m_data }
 	}
 
@@ -102,8 +108,8 @@ public struct Multipart {
 
 			private var headerDataString: String {
 				return "Content-Disposition: form-data; name=\"\(name)\""
-					+ Multipart.newLineCharacter
-					+ Multipart.newLineCharacter
+					+ Multipart.newLineString
+					+ Multipart.newLineString
 			}
 		}
 
@@ -137,10 +143,10 @@ public struct Multipart {
 
 			private var headerDataString: String {
 				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\""
-					+ Multipart.newLineCharacter
+					+ Multipart.newLineString
 					+ "Content-Type: \(contentType)"
-					+ Multipart.newLineCharacter
-					+ Multipart.newLineCharacter
+					+ Multipart.newLineString
+					+ Multipart.newLineString
 			}
 		}
 	}

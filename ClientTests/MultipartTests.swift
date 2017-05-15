@@ -8,8 +8,8 @@ class MultipartTests: XCTestCase {
 	func testCorrectBoundaryData() {
 		property("Multipart always generates correct boundaryData from a string") <- forAll { (boundary: String) in
 			let multipart = Multipart(boundary: boundary)
-			let expectedData = boundary.data(using: .utf8)!
-			return multipart.boundaryData == expectedData
+			let expectedData = (Multipart.preBoundaryString + boundary).data(using: .utf8)!
+			return multipart.contentBoundaryData == expectedData
 		}
 	}
 
@@ -96,10 +96,10 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectBoundariesPrefixAndSuffix() {
 		property("Multipart body ha always boundary prefix and postfix") <- forAll { (multi: Multipart) in
-			(multi.boundary.isEmpty.not && multi.parts.count > 0) ==> {
+			(multi.contentBoundary.isEmpty.not && multi.parts.count > 0) ==> {
 				let dataString = String(data: try! multi.getData(), encoding: .utf8)!
-				return dataString.hasPrefix(multi.boundary)
-					&& dataString.hasSuffix(multi.boundary)
+				return dataString.hasPrefix(multi.contentBoundary)
+					&& dataString.hasSuffix(multi.contentBoundary)
 			}
 		}
 	}
