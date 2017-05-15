@@ -80,7 +80,7 @@ class MultipartTests: XCTestCase {
 
 				let expectedFileCount = multi.parts.filter { if case .file = $0 { return true } else { return false } }.count
 				let gotFileCount = dataString
-					.components(separatedBy: "filename=\"\"")
+					.components(separatedBy: "filename=\"")
 					.count - 1
 
 				let expectedTextCount = multi.parts.filter { if case .text = $0 { return true } else { return false } }.count

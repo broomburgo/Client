@@ -114,13 +114,15 @@ public struct Multipart {
 		}
 
 		public struct File {
-			public var name: String
 			public var contentType: String
+			public var name: String
+			public var filename: String
 			public var data: Data
 
-			public init(name: String, contentType: String, data: Data) {
-				self.name = name
+			public init(contentType: String, name: String, filename: String, data: Data) {
 				self.contentType = contentType
+				self.name = name
+				self.filename = filename
 				self.data = data
 			}
 
@@ -142,7 +144,7 @@ public struct Multipart {
 			}
 
 			private var headerDataString: String {
-				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\""
+				return "Content-Disposition: form-data; name=\"\(name)\"; filename=\"\(filename)\""
 					+ Multipart.newLineString
 					+ "Content-Type: \(contentType)"
 					+ Multipart.newLineString

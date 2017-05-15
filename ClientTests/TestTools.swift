@@ -102,8 +102,9 @@ extension Multipart.Part.File: Arbitrary {
 	public static var arbitrary: Gen<Multipart.Part.File> {
 		return Gen<Multipart.Part.File>.compose {
 			Multipart.Part.File(
-				name: $0.generate(),
 				contentType: $0.generate(),
+				name: $0.generate(),
+				filename: $0.generate(),
 				data: $0.generate(using: String.arbitrary
 					.map { $0.data(using: .utf8)! }))
 		}
