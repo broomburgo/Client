@@ -357,7 +357,7 @@ public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
 		case .invalidHeader(let headerKey):
 			return "Header non valido alla chiave: \(headerKey)"
 		case .noValueAtPath(let error):
-			return error.description
+			return error.getNSError.localizedDescription
 		case .noValueInArray(let index):
 			return "Nessun valore trovato all'indice: \(index)"
 		case .noResults:
