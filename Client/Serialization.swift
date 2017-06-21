@@ -26,9 +26,8 @@ public struct Serialize {
 		}
 	}
 
-	public static var toFormURLEncoded: (Any) -> Result<Data> {
-		return { object in
-			guard let dict = object as? AnyDict else { return .failure(ClientError.serialization(.toFormURLEncoded)) }
+	public static var toFormURLEncoded: (AnyDict) -> Result<Data> {
+		return { dict in
 			if let data = wsBodyDataURLEncodedString(dict: dict, rootKey: nil).data(using: String.Encoding.utf8) {
 				return .success(data)
 			} else {
