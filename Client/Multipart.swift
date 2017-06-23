@@ -1,6 +1,6 @@
 import Foundation
 
-public struct Multipart {
+public struct Multipart: Equatable {
 	public static let errorDomain = "Client.Multipart"
 	static let newLineString = "\r\n"
 	static let newLineData = newLineString.data(using: .utf8)!
@@ -60,7 +60,14 @@ public struct Multipart {
 		return elements.reduce(Data()) { var m_data = $0; m_data.append($1); return m_data }
 	}
 
-	public enum Part {
+	public static func == (left: Multipart, right: Multipart) -> Bool {
+		return left.boundary == right.boundary
+			&& left.contentBoundary == right.contentBoundary
+			&& left.contentBoundaryData == right.contentBoundaryData
+			&& left.parts == right.parts
+	}
+
+	public enum Part: Equatable {
 		case text(Text)
 		case file(File)
 
@@ -82,7 +89,18 @@ public struct Multipart {
 			}
 		}
 
-		public struct Text {
+		public static func == (left: Part, right: Part) -> Bool {
+			switch (left,right) {
+			case (.text(let leftValue), .text(let rightValue)):
+				return leftValue == rightValue
+			case (.file(let leftValue), .file(let rightValue)):
+				return leftValue == rightValue
+			default:
+				return false
+			}
+		}
+
+		public struct Text: Equatable {
 			public var name: String
 			public var content: String
 
@@ -111,9 +129,14 @@ public struct Multipart {
 					+ Multipart.newLineString
 					+ Multipart.newLineString
 			}
+
+			public static func == (left: Text, right: Text) -> Bool {
+				return left.name == right.name
+					&& left.content == right.content
+			}
 		}
 
-		public struct File {
+		public struct File: Equatable {
 			public var contentType: String
 			public var name: String
 			public var filename: String
@@ -149,6 +172,13 @@ public struct Multipart {
 					+ "Content-Type: \(contentType)"
 					+ Multipart.newLineString
 					+ Multipart.newLineString
+			}
+
+			public static func == (left: File, right: File) -> Bool {
+				return left.contentType == right.contentType
+					&& left.name == right.name
+					&& left.filename == right.filename
+					&& left.data == right.data
 			}
 		}
 	}
