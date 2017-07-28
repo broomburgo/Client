@@ -1,8 +1,9 @@
 import Foundation
 import SwiftCheck
-import Functional
+import Abstract
 import JSONObject
 @testable import Client
+import Monads
 
 struct URLStringGenerator {
 	static var get: Gen<String> {

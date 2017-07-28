@@ -1,27 +1,25 @@
-import Functional
+import Monads
+import JSONObject
 
 public struct Parse {
 
 	public struct Response {
-		public static func acceptOnly(httpCodes accepted: [Int], parseErrorsWith errorStrategy: @escaping ([String:Any]) -> Result<[String:Any]> = { .success($0) }) -> (HTTPResponse) -> Result<HTTPResponse> {
+		public static func acceptOnly(httpCodes accepted: [Int], parseErrorsWith errorStrategy: @escaping ([String:Any]) -> ClientResult<[String:Any]> = { .success($0) }) -> (HTTPResponse) -> ClientResult<HTTPResponse> {
 			return { response in
 				let code = response.URLResponse.statusCode
 				guard accepted.contains(code) else {
-					let invalidHTTPCodeError = Result<HTTPResponse>.failure(ClientError.invalidHTTPCode(code))
-					return Result(response.output)
+					return ClientResult.init(response.output)
 						.flatMap(Deserialize.toAnyDictJSON)
-						.run(
-							ifSuccess: { errorStrategy($0)
-								.map { _ in response }
-								.flatMap { _ in invalidHTTPCodeError }
-						},
-							ifFailure: { _ in invalidHTTPCodeError })
+						.mapError(F.constant(.invalidHTTPCode(code)))
+						.flatMap(errorStrategy)
+						.flatMap(F.constant(ClientResult<HTTPResponse>.failure(.invalidHTTPCode(code))))
+						.ifCanceled(.failure(.invalidHTTPCode(code)))
 				}
 				return .success(response)
 			}
 		}
 
-		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401]) -> (HTTPResponse) -> Result<HTTPResponse> {
+		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401]) -> (HTTPResponse) -> ClientResult<HTTPResponse> {
 			return { response in
 				if codes.contains(response.URLResponse.statusCode) {
 					return .failure(ClientError.unauthorized)
@@ -31,44 +29,30 @@ public struct Parse {
 			}
 		}
 
-		public static func getHeader(at key: String) -> (HTTPResponse) -> Result<String> {
+		public static func getHeader(at key: String) -> (HTTPResponse) -> ClientResult<String> {
 			return { response in
 				guard let
 					header = response.URLResponse.allHeaderFields[key] as? String
-					else { return Result<String>.failure(ClientError.invalidHeader(key)) }
+					else { return ClientResult<String>.failure(ClientError.invalidHeader(key)) }
 				return .success(header)
 			}
 		}
 	}
 
 	public struct Output {
-		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> Result<CheckedType>) -> (OutputType) -> Result<OutputType> {
-			return { output in
-				switch errorStrategy(getCheckedType(output)) {
-				case let .failure(error):
-					return .failure(error)
-				case .success:
-					return .success(output)
-				}
-			}
+		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> ClientResult<CheckedType>) -> (OutputType) -> ClientResult<OutputType> {
+			return { output in errorStrategy(getCheckedType(output)).map(F.constant(output)) }
 		}
 
-		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> Result<OutputType>) -> (OutputType) -> Result<OutputType> {
-			return check(at: identity, errorStrategy: errorStrategy)
+		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> ClientResult<OutputType>) -> (OutputType) -> ClientResult<OutputType> {
+			return check(at: F.identity, errorStrategy: errorStrategy)
 		}
 
-		public static func getElement<T>(type: T.Type, at path: KeyPath) -> (AnyDict) -> Result<T> {
-			return { dict in
-				PathTo<T>(in: dict).get(path).run(
-					ifSuccess: { Result.success($0) },
-					ifFailure: {
-						guard let error = $0 as? PathError else { return Result.failure(ClientError.undefined($0)) }
-						return Result.failure(ClientError.noValueAtPath(error))
-				})
-			}
+		public static func getElement<T>(type: T.Type, at path: Path) -> ([String:Any]) -> ClientResult<T> {
+			return { PathTo<T>(in: $0).get(path).mapError(ClientError.noValueAtPath) }
 		}
 
-		public static func getElement<T>(at index: Int) -> ([T]) -> Result<T> {
+		public static func getElement<T>(at index: Int) -> ([T]) -> ClientResult<T> {
 			return { array in
 				if array.indices.contains(index) {
 					return .success(array[index])
@@ -80,7 +64,7 @@ public struct Parse {
 	}
 
 	public struct Error {
-		public static func noResults<T>() -> ([T]) -> Result<[T]> {
+		public static func noResults<T>() -> ([T]) -> ClientResult<[T]> {
 			return { results in
 				if results.count > 0 {
 					return .success(results)
@@ -90,7 +74,7 @@ public struct Parse {
 			}
 		}
 
-		public static func message(_ expectedText: String) -> (String) ->  Result<String> {
+		public static func message(_ expectedText: String) -> (String) ->  ClientResult<String> {
 			return { text in
 				if text == expectedText {
 					return .failure(ClientError.errorMessage(text))
@@ -100,46 +84,46 @@ public struct Parse {
 			}
 		}
 
-		public static func messageForKey(_ errorKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func messageForKey(_ errorKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorMessage = plist[errorKey] as? String else { return .success(plist) }
 				return .failure(ClientError.errorMessage(errorMessage))
 			}
 		}
 
-		public static func messageForKeyPath(_ errorKeyPath: KeyPath) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func messageForPath(_ errorPath: Path) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
-				guard let errorMessage = PathTo<String>(in: plist).get(errorKeyPath).toOptional else { return .success(plist) }
-				return .failure(ClientError.errorMessage(errorMessage))
+				guard let errorMessage = PathTo<String>(in: plist).get(errorPath).toOptional else { return .success(plist) }
+				return .failure(.errorMessage(errorMessage))
 			}
 		}
 
-		public static func multipleMessagesArray(errorsKey: String, messageKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func multipleMessagesArray(errorsKey: String, messageKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorsArray = plist[errorsKey] as? [[String:Any]] else { return .success(plist) }
 				let messages = errorsArray
-					.mapSome { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
+					.flatMap { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
 				guard messages.count > 0 else { return .success(plist) }
 				return .failure(ClientError.errorMessages(messages))
 			}
 		}
 
-		public static func multipleMessagesDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func multipleMessagesDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorsDict = plist[errorsKey] as? [String:[String:Any]] else { return .success(plist) }
 				let messages = errorsDict
 					.map { (key: String, value: [String:Any]) -> [String:Any] in value  }
-					.mapSome { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
+					.flatMap { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
 				guard messages.count > 0 else { return .success(plist) }
 				return .failure(ClientError.errorMessages(messages))
 			}
 		}
 
-		public static func multipleMessagesArrayOfDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func multipleMessagesArrayOfDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorsArray = plist[errorsKey] as? [[String:Any]] else { return .success(plist) }
 				let messages = errorsArray
-					.mapSome { (dict: [String:Any]) -> String? in
+					.flatMap { (dict: [String:Any]) -> String? in
 						dict.values.first
 							.flatMap { (value: Any) -> [String:Any]? in value as? [String:Any] }
 							.flatMap { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
@@ -149,26 +133,26 @@ public struct Parse {
 			}
 		}
 
-		public static func multipleMessagesDictionaryOfDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func multipleMessagesDictionaryOfDictionary(errorsKey: String, messageKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorsDict = plist[errorsKey] as? [String:Any] else { return .success(plist) }
 				let messages = errorsDict
 					.map { (key: String, value: Any) -> Any in value }
-					.mapSome { (value: Any) -> [String:Any]? in value as? [String:Any] }
-					.mapSome { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
+					.flatMap { (value: Any) -> [String:Any]? in value as? [String:Any] }
+					.flatMap { (dict: [String:Any]) -> String? in dict[messageKey] as? String }
 				guard messages.count > 0 else { return .success(plist) }
 				return .failure(ClientError.errorMessages(messages))
 			}
 		}
 
-		public static func arrayForKey(_ errorKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func arrayForKey(_ errorKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorArray = plist[errorKey] as? [String] else { return .success(plist) }
 				return .failure(ClientError.errorMessages(errorArray))
 			}
 		}
 
-		public static func plistForKey(_ errorKey: String) -> ([String:Any]) -> Result<[String:Any]> {
+		public static func plistForKey(_ errorKey: String) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
 				guard let errorPlist = plist[errorKey] as? [String:Any] else { return .success(plist) }
 				return .failure(ClientError.errorPlist(errorPlist))

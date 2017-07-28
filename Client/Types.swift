@@ -1,20 +1,69 @@
-import Functional
+import Abstract
+import Monads
 import JSONObject
 
-public typealias Resource<T> = Deferred<Writer<Result<T>,ConnectionInfo>>
+public typealias ClientResult<T> = Result<T,ClientError>
+public typealias ClientWriter<T> = Writer<ClientResult<T>,ConnectionInfo>
+public typealias Resource<T> = Deferred<ClientWriter<T>>
 public typealias Response = (optData: Data?, optResponse: URLResponse?, optError: Error?)
 public typealias Connection = (URLRequest) -> Resource<Response>
 
-public func failed<T>(with error: Error) -> Resource<T> {
-	return Deferred(Writer(Result<T>.failure(error)))
+public func failed<T>(with error: ClientError) -> Resource<T> {
+	return Resource<T>.init(Writer.init(Result.failure(error)))
 }
 
-public func failable<T>(from closure: () throws -> Resource<T>) -> Resource<T> {
+public func succeeded<T>(with value: T) -> Resource<T> {
+	return Resource<T>.init(Writer.init(Result.success(value)))
+}
+
+public func failable<T>(from closure: () throws -> Resource<T>) rethrows -> Resource<T> {
 	do {
 		return try closure()
 	}
-	catch let error {
+	catch let error as ClientError {
 		return failed(with: error)
+	}
+	catch let error {
+		throw error
+	}
+}
+
+//: ------------------------
+
+extension Sequence where SubSequence: Sequence, SubSequence.Iterator.Element == Iterator.Element {
+	var head: Iterator.Element? {
+		return first(where: { _ in true })
+	}
+
+	var tail: SubSequence? {
+		guard head != nil else { return nil }
+		return dropFirst()
+	}
+
+	func accumulate(combine: (Iterator.Element, Iterator.Element) throws -> Iterator.Element) rethrows -> Iterator.Element? {
+		guard let nonOptHead = head, let nonOptTail = tail else { return head }
+		return try nonOptTail.reduce(nonOptHead, combine)
+	}
+}
+
+extension Sequence where Iterator.Element: Monoid, SubSequence: Sequence, SubSequence.Iterator.Element == Iterator.Element {
+	func composeAll(separator: Iterator.Element = .empty) -> Iterator.Element {
+		guard let nonOptHead = head, let nonOptTail = tail else { return .empty }
+		return nonOptTail.reduce(nonOptHead) { $0 <> separator <> $1 }
+	}
+}
+
+extension Dictionary where Value: Monoid {
+	static func <> (left: Dictionary, right: Dictionary) -> Dictionary {
+		var m_dict = left
+		for (key,value) in right {
+			if let current = m_dict[key] {
+				m_dict[key] = current <> value
+			} else {
+				m_dict[key] = value
+			}
+		}
+		return m_dict
 	}
 }
 
@@ -35,7 +84,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 		return m_self
 	}
 
-	public static var zero: ConnectionInfo {
+	public static var empty: ConnectionInfo {
 		return ConnectionInfo(
 			connectionName: nil,
 			urlComponents: nil,
@@ -46,15 +95,15 @@ public struct ConnectionInfo: Monoid, Equatable {
 			serverOutput: nil)
 	}
 
-	public func compose (_ other: ConnectionInfo) -> ConnectionInfo {
+	public static func <> (_ left: ConnectionInfo, _ right: ConnectionInfo) -> ConnectionInfo {
 		return ConnectionInfo(
-			connectionName: other.connectionName ?? connectionName,
-			urlComponents: other.urlComponents ?? urlComponents,
-			originalRequest: other.originalRequest ?? originalRequest,
-			bodyStringRepresentation: other.bodyStringRepresentation ?? bodyStringRepresentation,
-			connectionError: other.connectionError ?? connectionError,
-			serverResponse: other.serverResponse ?? serverResponse,
-			serverOutput: other.serverOutput ?? serverOutput)
+			connectionName: right.connectionName ?? left.connectionName,
+			urlComponents: right.urlComponents ?? left.urlComponents,
+			originalRequest: right.originalRequest ?? left.originalRequest,
+			bodyStringRepresentation: right.bodyStringRepresentation ?? left.bodyStringRepresentation,
+			connectionError: right.connectionError ?? left.connectionError,
+			serverResponse: right.serverResponse ?? left.serverResponse,
+			serverOutput: right.serverOutput ?? left.serverOutput)
 	}
 
 	public static func == (left: ConnectionInfo, right: ConnectionInfo) -> Bool {
@@ -75,7 +124,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 		let requestURLQueryString: JSONObject? = urlComponents?.query.map(JSONObject.string)
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
-		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.composeAll()
+		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.reduce(.empty, <>)
 		let requestBodyStringRepresentation: JSONObject? = bodyStringRepresentation.map(JSONObject.string)
 			?? (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
 			?? (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
@@ -91,7 +140,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 				guard let key = key.base as? String else { return JSONObject.null }
 				return JSONObject.dict([key : .with(value)])
 			}
-			.composeAll()
+			.reduce(.empty, <>)
 		let responseBody: JSONObject? = serverOutput
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
@@ -176,7 +225,7 @@ public struct Request {
 		self.body = body
 	}
 
-	public init(identifier: String, configuration: ClientConfiguration, method: HTTPMethod, additionalHeaders: [String:String]?, path: String?, queryStringParameters: AnyDict?, body: Data?) {
+	public init(identifier: String, configuration: ClientConfiguration, method: HTTPMethod, additionalHeaders: [String:String]?, path: String?, queryStringParameters: [String:Any]?, body: Data?) {
 		self.init(
 			identifier: identifier,
 			urlComponents: URLComponents()
@@ -188,15 +237,15 @@ public struct Request {
 				.append(path: path.get(or: ""))
 				.setQueryString(parameters: queryStringParameters ?? [:]),
 			method: method,
-			headers: configuration.defaultHeaders.get(or: [:])
-				.compose(additionalHeaders.get(or: [:])),
+			headers: configuration.defaultHeaders.get(or: [:]) <> additionalHeaders.get(or: [:]),
 			body: body)
 	}
 
-	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> Writer<Result<URLRequest>,ConnectionInfo> {
+	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> Writer<ClientResult<URLRequest>,ConnectionInfo> {
 
-		let baseWriter = Writer<(),ConnectionInfo>((), ConnectionInfo.zero.with { $0.connectionName = self.identifier}
-			.compose(ConnectionInfo.zero.with { $0.urlComponents = self.urlComponents}))
+		let baseWriter = Writer<(),ConnectionInfo>.init(
+			value: (),
+			log: ConnectionInfo.empty.with { $0.connectionName = self.identifier; $0.urlComponents = self.urlComponents })
 
 		guard let url = urlComponents.url else {
 			return baseWriter.map { Result.failure(ClientError.request(self.urlComponents))}
@@ -212,7 +261,7 @@ public struct Request {
 
 		let request = m_request.copy() as! URLRequest
 		return baseWriter
-			.tell(ConnectionInfo.zero.with { $0.originalRequest = request })
+			.tell(ConnectionInfo.empty.with { $0.originalRequest = request })
 			.map { Result.success(request) }
 	}
 }
@@ -230,9 +279,9 @@ public struct HTTPResponse {
 
 	public var toWriter: Writer<HTTPResponse,ConnectionInfo> {
 		return Writer(self)
-			.tell(ConnectionInfo.zero
+			.tell(ConnectionInfo.empty
 				.with { $0.serverResponse = self.URLResponse})
-			.tell(ConnectionInfo.zero
+			.tell(ConnectionInfo.empty
 				.with { $0.serverOutput = self.output})
 	}
 }
@@ -241,7 +290,7 @@ public struct HTTPResponse {
 //MARK: - Errors
 //: ------------------------
 
-public enum SerializationError: CustomStringConvertible, NSErrorConvertible {
+public enum SerializationError: CustomStringConvertible {
 	case toJSON(NSError)
 	case toFormURLEncoded
 
@@ -271,7 +320,7 @@ public enum SerializationError: CustomStringConvertible, NSErrorConvertible {
 
 //: ------------------------
 
-public enum DeserializationError: CustomStringConvertible, NSErrorConvertible {
+public enum DeserializationError: CustomStringConvertible {
 	case toAny(NSError?)
 	case toAnyDict(NSError?)
 	case toArray(NSError?)
@@ -282,7 +331,7 @@ public enum DeserializationError: CustomStringConvertible, NSErrorConvertible {
 		case .toAny:
 			return "DeserializationError: toAny"
 		case .toAnyDict:
-			return "DeserializationError: toAnyDict"
+			return "DeserializationError: to[String:Any]"
 		case .toArray:
 			return "DeserializationError: toArray"
 		case .toString:
@@ -303,7 +352,7 @@ public enum DeserializationError: CustomStringConvertible, NSErrorConvertible {
 			return optionalError ?? NSError(
 				domain: DeserializationError.errorDomain,
 				code: 1,
-				userInfo: [NSLocalizedDescriptionKey : "Cannot deserialize into 'AnyDict'"])
+				userInfo: [NSLocalizedDescriptionKey : "Cannot deserialize into '[String:Any]'"])
 		case .toArray(let optionalError):
 			return optionalError ?? NSError(
 				domain: DeserializationError.errorDomain,
@@ -320,7 +369,7 @@ public enum DeserializationError: CustomStringConvertible, NSErrorConvertible {
 
 //: ------------------------
 
-public enum ClientError: Error, CustomStringConvertible, NSErrorConvertible {
+public enum ClientError: Error, CustomStringConvertible {
 	case generic(NSError)
 	case connection(NSError)
 	case request(URLComponents)

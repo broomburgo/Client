@@ -1,2 +1,3 @@
-github "broomburgo/Functional" "master"
-github "broomburgo/JSONObject" "master"
+github "broomburgo/JSONObject" "migrate_to_abstract_and_monads"
+github "broomburgo/Abstract" "master"
+git "/Users/elviro/Documents/Projects/Monads" "master"

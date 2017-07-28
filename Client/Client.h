@@ -2,11 +2,11 @@
 //  Client.h
 //  Client
 //
-//  Created by Elviro Rocca on 03/02/17.
+//  Created by Elviro Rocca on 28/07/17.
 //  Copyright © 2017 broomburgo.it. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import <Cocoa/Cocoa.h>
 
 //! Project version number for Client.
 FOUNDATION_EXPORT double ClientVersionNumber;

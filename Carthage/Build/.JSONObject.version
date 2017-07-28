@@ -1,8 +1,14 @@
 {
-  "commitish" : "ca68c94fae3b119ed3abf7676560fa8da79f929d",
   "iOS" : [
     {
-      "hash" : "a22925bd28bd28c899f0a095ab05dfc2bfc6093bafc7a1da80d28aea05be6b47",
+      "hash" : "8fe8e787383f2e46935e3de6f51471628982f6068639740f25fbacdd25723106",
+      "name" : "JSONObject"
+    }
+  ],
+  "commitish" : "93b9a720b1671d3ed6c507690f91a98b8d7f69fc",
+  "Mac" : [
+    {
+      "hash" : "7a2eb61c06a9a4e8f2ac500145a34d157a0aec0fc57ee252b22d4e7158dd502f",
       "name" : "JSONObject"
     }
   ]

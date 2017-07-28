@@ -1,10 +1,10 @@
-import Functional
+import Abstract
 import JSONObject
 
 //: ------------------------
 
 public struct Serialize {
-	public static var toJSON: (Any) -> Result<Data> {
+	public static var toJSON: (Any) -> ClientResult<Data> {
 		return { object in
 			do {
 				return try .success(JSONSerialization.data(with: JSONObject.with(object)))
@@ -15,7 +15,7 @@ public struct Serialize {
 		}
 	}
 
-	public static var fromJSONObject: (JSONObject) -> Result<Data> {
+	public static var fromJSONObject: (JSONObject) -> ClientResult<Data> {
 		return { object in
 			do {
 				return try .success(JSONSerialization.data(with: object))
@@ -26,7 +26,7 @@ public struct Serialize {
 		}
 	}
 
-	public static var toFormURLEncoded: (AnyDict) -> Result<Data> {
+	public static var toFormURLEncoded: ([String:Any]) -> ClientResult<Data> {
 		return { dict in
 			if let data = wsBodyDataURLEncodedString(dict: dict, rootKey: nil).data(using: String.Encoding.utf8) {
 				return .success(data)
@@ -38,7 +38,7 @@ public struct Serialize {
 
 	fileprivate typealias PlistStringReducer = (String, (String, Any)) -> String
 
-	fileprivate static func wsBodyDataURLEncodedString(dict: AnyDict, rootKey: String?) -> String {
+	fileprivate static func wsBodyDataURLEncodedString(dict: [String:Any], rootKey: String?) -> String {
 		let rawDataString = dict.reduce("", wsBodyDataURLEncodedReducerWithRootKey(rootKey))
 		var characters = rawDataString.characters
 		characters.removeFirst()
@@ -66,9 +66,9 @@ public struct Serialize {
 //: ------------------------
 
 public struct Deserialize {
-	public static var ignored: (Data) -> Result<()> { return { _ in .success() } }
+	public static var ignored: (Data) -> ClientResult<()> { return { _ in .success() } }
 
-	public static var toAnyJSON: (Data) -> Result<Any> {
+	public static var toAnyJSON: (Data) -> ClientResult<Any> {
 		return { data in
 			do {
 				return try .success(JSONSerialization.jsonObject(with: data, options: .allowFragments))
@@ -79,7 +79,7 @@ public struct Deserialize {
 		}
 	}
 
-	public static var toAnyDictJSON: (Data) -> Result<AnyDict> {
+	public static var toAnyDictJSON: (Data) -> ClientResult<[String:Any]> {
 		return { data in
 			do {
 				if let plist = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String:Any] {
@@ -94,7 +94,7 @@ public struct Deserialize {
 		}
 	}
 
-	public static var toAnyArrayJSON: (Data) -> Result<[Any]> {
+	public static var toAnyArrayJSON: (Data) -> ClientResult<[Any]> {
 		return { data in
 			do {
 				if let array = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [Any] {
@@ -109,7 +109,7 @@ public struct Deserialize {
 		}
 	}
 
-	public static var toAnyDictArrayJSON: (Data) -> Result<[AnyDict]> {
+	public static var toAnyDictArrayJSON: (Data) -> ClientResult<[[String:Any]]> {
 		return { data in
 			do {
 				if let array = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [[String:Any]] {
@@ -124,7 +124,7 @@ public struct Deserialize {
 		}
 	}
 
-	public static var toString: (Data) -> Result<String> {
+	public static var toString: (Data) -> ClientResult<String> {
 		return { data in
 			if let string = String(data: data, encoding: String.Encoding.utf8) {
 				return .success(string)

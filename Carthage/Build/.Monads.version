@@ -1,0 +1,15 @@
+{
+  "iOS" : [
+    {
+      "hash" : "9daeedbbadb624d4725bff451394d13a82ec2cc5e7b1b0e583e1157326f94297",
+      "name" : "Monads"
+    }
+  ],
+  "commitish" : "eb6a722825a6b44c1bb9f59bc8b2ce5657d0219c",
+  "Mac" : [
+    {
+      "hash" : "5627e69df6ce61ac5d372c91999e154e160be3e2788ee3245b9ea120076b9997",
+      "name" : "Monads"
+    }
+  ]
+}

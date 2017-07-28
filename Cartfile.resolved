@@ -1,2 +1,5 @@
-github "broomburgo/Functional" "30854e086c8e0ac646d83309e8807d8a1667fe9b"
-github "broomburgo/JSONObject" "ca68c94fae3b119ed3abf7676560fa8da79f929d"
+git "/Users/elviro/Documents/Projects/Monads" "eb6a722825a6b44c1bb9f59bc8b2ce5657d0219c"
+github "Quick/Nimble" "v7.0.1"
+github "broomburgo/Abstract" "a891f7af76aa7133b4be4b7d45f48e4b0cbdc628"
+github "broomburgo/JSONObject" "93b9a720b1671d3ed6c507690f91a98b8d7f69fc"
+github "typelift/SwiftCheck" "0.8.0"

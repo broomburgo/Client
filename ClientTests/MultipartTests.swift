@@ -65,7 +65,7 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectNumberOfElements() {
 		property("Multipart has correct count for each element in body") <- forAll { (multi: Multipart) in
-			(multi.boundary.isEmpty.not && multi.parts.count > 0) ==> {
+			(multi.boundary.isEmpty == false && multi.parts.count > 0) ==> {
 				let dataString = String(data: try! multi.getData(), encoding: .utf8)!
 
 				let expectedContentDispositionCount = multi.parts.count
@@ -96,7 +96,7 @@ class MultipartTests: XCTestCase {
 
 	func testCorrectBoundariesPrefixAndSuffix() {
 		property("Multipart body ha always boundary prefix and postfix") <- forAll { (multi: Multipart) in
-			(multi.contentBoundary.isEmpty.not && multi.parts.count > 0) ==> {
+			(multi.contentBoundary.isEmpty == false && multi.parts.count > 0) ==> {
 				let dataString = String(data: try! multi.getData(), encoding: .utf8)!
 				return dataString.hasPrefix(multi.contentBoundary)
 					&& dataString.hasSuffix(multi.contentBoundary)

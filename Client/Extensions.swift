@@ -1,5 +1,5 @@
-import Functional
 import JSONObject
+import Monads
 
 //: ------------------------
 
@@ -36,37 +36,37 @@ extension URLComponents {
 
 extension Request {
 	public func getHTTPResponse(connection: @escaping Connection) -> Resource<HTTPResponse> {
-		return Deferred(getURLRequestWriter())
+		return Deferred.init(getURLRequestWriter())
 			.flatMapTT(connection)
 			.flatMapTT {
 				let optData = $0.optData
 				let optResponse = $0.optResponse as? HTTPURLResponse
 				let optError = $0.optError as NSError?
 
-				let info = ConnectionInfo.zero.with {
+				let info = ConnectionInfo.empty.with {
 					$0.connectionError = optError
 					$0.serverResponse = optResponse
 					$0.serverOutput = optData
 				}
 
 				if let error = optError {
-					return Deferred(Writer(
-						.failure(ClientError.connection(error)),
-						info))
+					return Resource<HTTPResponse>.init(Writer.init(
+						value: .failure(.connection(error)),
+						log: info))
 				} else if let response = optResponse {
 					if let data = optData {
-						return Deferred(Writer(
-							.success(HTTPResponse(URLResponse: response, output: data)),
-							info))
+						return Resource<HTTPResponse>.init(Writer.init(
+							value: .success(HTTPResponse(URLResponse: response, output: data)),
+							log: info))
 					} else {
-						return Deferred(Writer(
-							.failure(ClientError.noData),
-							info))
+						return Resource<HTTPResponse>.init(Writer.init(
+							value: .failure(.noData),
+							log: info))
 					}
 				} else {
-					return Deferred(Writer(
-						.failure(ClientError.noResponse),
-						info))
+					return Resource<HTTPResponse>.init(Writer.init(
+						value: .failure(.noResponse),
+						log: info))
 				}
 		}
 	}
@@ -76,7 +76,7 @@ extension Request {
 		configuration: ClientConfiguration,
 		path: String,
 		additionalHeaders: [String:String]? = nil,
-		queryStringParameters: AnyDict? = nil,
+		queryStringParameters: [String:Any]? = nil,
 		connection: @escaping Connection) -> Resource<HTTPResponse> {
 		return Request(
 			identifier: identifier,

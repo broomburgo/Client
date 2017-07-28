@@ -45,7 +45,7 @@ public struct Multipart: Equatable {
 	public var stringRepresentation: String {
 		guard parts.count > 0 else { return "" }
 
-		let elements = [contentBoundary] + parts.map { Multipart.newLineString + $0.stringRepresentation + Multipart.newLineString + contentBoundary }
+		let elements = [contentBoundary] + parts.map { Multipart.newLineString + $0.stringRepresentation + Multipart.newLineString + self.contentBoundary }
 		return elements.reduce("", +)
 	}
 
@@ -56,7 +56,7 @@ public struct Multipart: Equatable {
 			Multipart.newLineData
 				+ (try $0.getData())
 				+ Multipart.newLineData
-				+ contentBoundaryData })
+				+ self.contentBoundaryData })
 		return elements.reduce(Data()) { var m_data = $0; m_data.append($1); return m_data }
 	}
 
