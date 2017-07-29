@@ -2,10 +2,10 @@ language: objective-c
 osx_image: xcode8.3
 xcode_project: Client.xcodeproj
 xcode_scheme: Client
-xcode_sdk: iphonesimulator10.3
+xcode_sdk: macosx10.12
 
 script:
-  - xcodebuild clean build test -project "Client.xcodeproj" -scheme "Client" -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.3.1'
+- xcodebuild clean build test -project "Client.xcodeproj" -scheme "Client" -destination 'generic/platform=macOS'
 
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
