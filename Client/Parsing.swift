@@ -93,7 +93,7 @@ public struct Parse {
 
 		public static func messageForPath(_ errorPath: Path) -> ([String:Any]) -> ClientResult<[String:Any]> {
 			return { plist in
-				guard let errorMessage = PathTo<String>(in: plist).get(errorPath).toOptional else { return .success(plist) }
+				guard let errorMessage = PathTo<String>(in: plist).get(errorPath).toOptionalValue else { return .success(plist) }
 				return .failure(.errorMessage(errorMessage))
 			}
 		}
