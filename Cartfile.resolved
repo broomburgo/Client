@@ -1,5 +1,5 @@
 github "Quick/Nimble" "v7.0.1"
 github "broomburgo/Abstract" "a891f7af76aa7133b4be4b7d45f48e4b0cbdc628"
-github "broomburgo/JSONObject" "e288695f55d90ece612ed1083592f6a935e25f88"
+github "broomburgo/JSONObject" "38d3f7023b4321ca837e80174587d664e80bce6a"
 github "broomburgo/Monads" "0.0.1"
 github "typelift/SwiftCheck" "0.8.0"
