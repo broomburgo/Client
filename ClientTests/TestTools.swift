@@ -39,6 +39,7 @@ extension ConnectionInfo: Arbitrary {
 				urlComponents: $0.generate(using: URLStringGenerator.get.map(URLComponents.init)),
 				originalRequest: $0.generate(using: URLStringGenerator.get.map { URL(string: $0).map { URLRequest(url: $0) } }),
 				bodyStringRepresentation: $0.generate(),
+				originalTask: Gen<Optional<URLSessionTask>>.fromElements(of: [.none,.some(URLSessionTask.init())]).generate,
 				connectionError: NSError(domain: $0.generate(), code: $0.generate(), userInfo: nil),
 				serverResponse: $0.generate(using: URLStringGenerator.get.map { URL(string: $0).map { HTTPURLResponse(url: $0, mimeType: nil, expectedContentLength: 0, textEncodingName: nil) } }),
 				serverOutput: $0.generate(using: OptionalOf<String>.arbitrary.map { $0.getOptional.flatMap { $0.data(using: .utf8, allowLossyConversion: true) }}))

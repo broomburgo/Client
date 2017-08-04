@@ -74,6 +74,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 	public var urlComponents: URLComponents?
 	public var originalRequest: URLRequest?
 	public var bodyStringRepresentation: String?
+	public var originalTask: URLSessionTask?
 	public var connectionError: NSError?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
@@ -90,6 +91,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			urlComponents: nil,
 			originalRequest: nil,
 			bodyStringRepresentation: nil,
+			originalTask: nil,
 			connectionError: nil,
 			serverResponse: nil,
 			serverOutput: nil)
@@ -101,6 +103,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			urlComponents: right.urlComponents ?? left.urlComponents,
 			originalRequest: right.originalRequest ?? left.originalRequest,
 			bodyStringRepresentation: right.bodyStringRepresentation ?? left.bodyStringRepresentation,
+			originalTask: right.originalTask ?? left.originalTask,
 			connectionError: right.connectionError ?? left.connectionError,
 			serverResponse: right.serverResponse ?? left.serverResponse,
 			serverOutput: right.serverOutput ?? left.serverOutput)
@@ -111,6 +114,8 @@ public struct ConnectionInfo: Monoid, Equatable {
 			&& left.urlComponents == right.urlComponents
 			&& left.originalRequest == right.originalRequest
 			&& left.bodyStringRepresentation == right.bodyStringRepresentation
+			&& left.originalTask == right.originalTask
+			&& left.connectionError == right.connectionError
 			&& left.serverResponse == right.serverResponse
 			&& left.serverOutput == right.serverOutput
 	}
@@ -129,6 +134,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			?? (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
 			?? (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
 		let requestBodyByteLength: JSONObject? = originalRequest?.httpBody.map { $0.count }.map(JSONObject.number)
+		let task: JSONObject? = originalTask.map { JSONObject.string("\($0)") }
 		let connError: JSONObject? = connectionError.map { JSONObject.dict([
 			"Code" : .number($0.code),
 			"Domain" : .string($0.domain),
@@ -158,6 +164,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			.dict(["Request HTTP Headers" : requestHTTPHeaders.get(or: .null)]),
 			.dict(["Request Body String Representation" : requestBodyStringRepresentation.get(or: .null)]),
 			.dict(["Request Body Byte Length" : requestBodyByteLength.get(or: .null)]),
+			.dict(["Original Task" : task.get(or: .null)]),
 			.dict(["Connection Error" : connError.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
