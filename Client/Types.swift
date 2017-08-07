@@ -2,11 +2,16 @@ import Abstract
 import Monads
 import JSONObject
 
+public enum ConnectionAction {
+	case cancel
+}
+
 public typealias ClientResult<T> = Result<T,ClientError>
 public typealias ClientWriter<T> = Writer<ClientResult<T>,ConnectionInfo>
 public typealias Resource<T> = Deferred<ClientWriter<T>>
 public typealias Response = (optData: Data?, optResponse: URLResponse?, optError: Error?)
-public typealias Connection = (URLRequest) -> Resource<Response>
+public typealias ConnectionWriter<T> = Writer<Resource<T>,Coeffect<ConnectionAction>>
+public typealias Connection = (URLRequest) -> ConnectionWriter<Response>
 
 public func failed<T>(with error: ClientError) -> Resource<T> {
 	return Resource<T>.init(Writer.init(Result.failure(error)))
@@ -74,7 +79,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 	public var urlComponents: URLComponents?
 	public var originalRequest: URLRequest?
 	public var bodyStringRepresentation: String?
-	public var originalTask: URLSessionTask?
 	public var connectionError: NSError?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
@@ -91,7 +95,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 			urlComponents: nil,
 			originalRequest: nil,
 			bodyStringRepresentation: nil,
-			originalTask: nil,
 			connectionError: nil,
 			serverResponse: nil,
 			serverOutput: nil)
@@ -103,7 +106,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 			urlComponents: right.urlComponents ?? left.urlComponents,
 			originalRequest: right.originalRequest ?? left.originalRequest,
 			bodyStringRepresentation: right.bodyStringRepresentation ?? left.bodyStringRepresentation,
-			originalTask: right.originalTask ?? left.originalTask,
 			connectionError: right.connectionError ?? left.connectionError,
 			serverResponse: right.serverResponse ?? left.serverResponse,
 			serverOutput: right.serverOutput ?? left.serverOutput)
@@ -114,7 +116,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 			&& left.urlComponents == right.urlComponents
 			&& left.originalRequest == right.originalRequest
 			&& left.bodyStringRepresentation == right.bodyStringRepresentation
-			&& left.originalTask == right.originalTask
 			&& left.connectionError == right.connectionError
 			&& left.serverResponse == right.serverResponse
 			&& left.serverOutput == right.serverOutput
@@ -134,7 +135,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 			?? (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
 			?? (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
 		let requestBodyByteLength: JSONObject? = originalRequest?.httpBody.map { $0.count }.map(JSONObject.number)
-		let task: JSONObject? = originalTask.map { JSONObject.string("\($0)") }
 		let connError: JSONObject? = connectionError.map { JSONObject.dict([
 			"Code" : .number($0.code),
 			"Domain" : .string($0.domain),
@@ -164,7 +164,6 @@ public struct ConnectionInfo: Monoid, Equatable {
 			.dict(["Request HTTP Headers" : requestHTTPHeaders.get(or: .null)]),
 			.dict(["Request Body String Representation" : requestBodyStringRepresentation.get(or: .null)]),
 			.dict(["Request Body Byte Length" : requestBodyByteLength.get(or: .null)]),
-			.dict(["Original Task" : task.get(or: .null)]),
 			.dict(["Connection Error" : connError.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
@@ -248,14 +247,9 @@ public struct Request {
 			body: body)
 	}
 
-	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> Writer<ClientResult<URLRequest>,ConnectionInfo> {
-
-		let baseWriter = Writer<(),ConnectionInfo>.init(
-			value: (),
-			log: ConnectionInfo.empty.with { $0.connectionName = self.identifier; $0.urlComponents = self.urlComponents })
-
+	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> ClientResult<Writer<URLRequest,ConnectionInfo>> {
 		guard let url = urlComponents.url else {
-			return baseWriter.map { Result.failure(ClientError.request(self.urlComponents))}
+			return ClientResult.failure(.request(urlComponents))
 		}
 
 		let m_request = NSMutableURLRequest(
@@ -267,9 +261,17 @@ public struct Request {
 		m_request.httpBody = body
 
 		let request = m_request.copy() as! URLRequest
-		return baseWriter
-			.tell(ConnectionInfo.empty.with { $0.originalRequest = request })
-			.map { Result.success(request) }
+
+		let info = ConnectionInfo.init(
+			connectionName: identifier,
+			urlComponents: urlComponents,
+			originalRequest: request,
+			bodyStringRepresentation: nil,
+			connectionError: nil,
+			serverResponse: nil,
+			serverOutput: nil)
+
+		return ClientResult.init(Writer.init(value: request, log: info))
 	}
 }
 

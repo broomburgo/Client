@@ -1,5 +1,6 @@
 import JSONObject
 import Monads
+import Abstract
 
 //: ------------------------
 
@@ -35,15 +36,22 @@ extension URLComponents {
 //: ------------------------
 
 extension Request {
-	public func getHTTPResponse(connection: @escaping Connection) -> Resource<HTTPResponse> {
-		return Deferred.init(getURLRequestWriter())
-			.flatMapTT(connection)
-			.flatMapTT {
+	public func getHTTPResponse(connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
+		let result = getURLRequestWriter()
+
+		guard let writer = result.toOptionalValue else {
+			return ConnectionWriter<HTTPResponse>.pure(Result.failure(result.toOptionalError!))
+		}
+
+		let (request,urlRequestInfo) = writer.run
+
+		return connection(request).map {
+			$0.flatMapTT {
 				let optData = $0.optData
 				let optResponse = $0.optResponse as? HTTPURLResponse
 				let optError = $0.optError as NSError?
 
-				let info = ConnectionInfo.empty.with {
+				let info = urlRequestInfo.with {
 					$0.connectionError = optError
 					$0.serverResponse = optResponse
 					$0.serverOutput = optData
@@ -68,6 +76,7 @@ extension Request {
 						value: .failure(.noResponse),
 						log: info))
 				}
+			}
 		}
 	}
 
@@ -77,7 +86,7 @@ extension Request {
 		path: String,
 		additionalHeaders: [String:String]? = nil,
 		queryStringParameters: [String:Any]? = nil,
-		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,
@@ -95,7 +104,7 @@ extension Request {
 		path: String,
 		body: Data?,
 		additionalHeaders: [String:String]? = nil,
-		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,
@@ -113,7 +122,7 @@ extension Request {
 		path: String,
 		body: Data?,
 		additionalHeaders: [String:String]? = nil,
-		connection: @escaping Connection) -> Resource<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,
