@@ -13,7 +13,10 @@ public struct Parse {
 						.mapError(F.constant(.invalidHTTPCode(code)))
 						.flatMap(errorStrategy)
 						.flatMap(F.constant(ClientResult<HTTPResponse>.failure(.invalidHTTPCode(code))))
-						.ifCanceled(.failure(.invalidHTTPCode(code)))
+						.run(
+							ifSuccess: ClientResult.success,
+							ifFailure: ClientResult.failure,
+							ifCancel: F.constant(ClientResult.failure(.invalidHTTPCode(code))))
 				}
 				return .success(response)
 			}
