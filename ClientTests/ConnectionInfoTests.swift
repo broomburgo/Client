@@ -5,21 +5,14 @@ import SwiftCheck
 import Nimble
 import Client
 
-typealias TestedType = ConnectionInfo
-
 class ConnectionInfoTests: XCTestCase {
-    
 	func testMonoidLaws() {
-		property("1•a = a") <- forAll { (object: TestedType) in
-			return (.empty <> object) == object
+		property("ConnectionInfo composition is neutral to empty") <- forAll { (a: ConnectionInfo) in
+			Law<ConnectionInfo>.isNeutralToEmpty(a)
 		}
 
-		property("a•1 = a") <- forAll { (object: TestedType) in
-			return (object <> .empty) == object
-		}
-
-		property("(a•b)•c = a•(b•c)") <- forAll { (object1: TestedType, object2: TestedType, object3: TestedType) in
-			return (object1 <> object2 <> object3) == (object1 <> (object2 <> object3))
+		property("ConnectionInfo composition is associative") <- forAll { (a: ConnectionInfo, b: ConnectionInfo, c: ConnectionInfo) in
+			Law<ConnectionInfo>.isAssociative(a, b, c)
 		}
 	}
 }
