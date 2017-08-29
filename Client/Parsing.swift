@@ -1,5 +1,6 @@
 import Monads
 import JSONObject
+import Functional
 
 public struct Parse {
 

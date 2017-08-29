@@ -1,3 +1,4 @@
 github "broomburgo/JSONObject" "master"
 github "broomburgo/Abstract" "master"
+github "broomburgo/Functional" "master"
 github "broomburgo/Monads"

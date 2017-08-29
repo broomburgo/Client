@@ -4,6 +4,7 @@ import Client
 import JSONObject
 import Abstract
 import Monads
+import Functional
 
 class SerializeTests: XCTestCase {
     
