@@ -1,6 +1,6 @@
 github "Quick/Nimble" "v7.0.1"
 github "broomburgo/Abstract" "49b720ae6fa62e9e0ab4e79608fd6055afcea00c"
-github "broomburgo/Functional" "84aee49ed7ae1180e3b153a1e56b630b07befd52"
+github "broomburgo/Functional" "0.0.3"
 github "broomburgo/JSONObject" "1bb84b4edac93b52a784e177a323086c2d596690"
 github "broomburgo/Monads" "0.4.1"
 github "broomburgo/Operadics" "0.2.3"
