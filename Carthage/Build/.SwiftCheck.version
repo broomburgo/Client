@@ -1,14 +1,14 @@
 {
   "iOS" : [
     {
-      "hash" : "bdfbfa8efe41946263a8f563fa2957a8185ef3d456fe1b7674b33c5fd3d52f53",
+      "hash" : "37e28e585683aa69a862757a25d3004192b55185d47b2f33f1909f2ddc4e86ad",
       "name" : "SwiftCheck"
     }
   ],
   "commitish" : "0.8.0",
   "Mac" : [
     {
-      "hash" : "5558bba39dc117eb2bd942077a01f42407c44b59e4eede4c3537d2184fac6dcf",
+      "hash" : "cfb21e66e5b5261a82f59a4b459b4e95b65dfc78b4e9bcf9330794bf6f393509",
       "name" : "SwiftCheck"
     }
   ]
