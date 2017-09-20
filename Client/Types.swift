@@ -131,9 +131,12 @@ public struct ConnectionInfo: Monoid, Equatable {
 		let requestURLFullString: JSONObject? = (originalRequest?.url?.absoluteString.removingPercentEncoding).map(JSONObject.string)
 		let requestHTTPMethod: JSONObject? = originalRequest?.httpMethod.map(JSONObject.string)
 		let requestHTTPHeaders = originalRequest?.allHTTPHeaderFields?.map { JSONObject.dict([$0 : .string($1)]) }.reduce(.empty, <>)
-		let requestBodyStringRepresentation: JSONObject? = bodyStringRepresentation.map(JSONObject.string)
-			?? (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
-			?? (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
+
+		let bodyString1 = bodyStringRepresentation.map(JSONObject.string)
+		let bodyString2 = (originalRequest?.httpBody).flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with) }
+		let bodyString3 = (originalRequest?.httpBody).flatMap { String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string) }
+
+		let requestBodyStringRepresentation: JSONObject? = bodyString1 ?? bodyString2 ?? bodyString3
 		let requestBodyByteLength: JSONObject? = originalRequest?.httpBody.map { $0.count }.map(JSONObject.number)
 		let connError: JSONObject? = connectionError.map { JSONObject.dict([
 			"Code" : .number($0.code),

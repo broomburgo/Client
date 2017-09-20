@@ -178,6 +178,38 @@
 			name = Docs;
 			sourceTree = "<group>";
 		};
+		38C349921F72CD0F00811F72 /* macOS */ = {
+			isa = PBXGroup;
+			children = (
+				384AB9591F556D4400DE1335 /* Functional.framework */,
+				38FDFEC71F2B42CF002ECC3A /* Monads.framework */,
+				38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */,
+				38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */,
+			);
+			name = macOS;
+			sourceTree = "<group>";
+		};
+		38C349931F72CD4500811F72 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				384AB95B1F556D5300DE1335 /* Functional.framework */,
+				38FDFECA1F2B42DE002ECC3A /* Monads.framework */,
+				38FDFEC51F2B3CEE002ECC3A /* Abstract.framework */,
+				38FDFEC61F2B3CEE002ECC3A /* JSONObject.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		38C349941F72CD5400811F72 /* tests only */ = {
+			isa = PBXGroup;
+			children = (
+				384AB9601F556DD500DE1335 /* Operadics.framework */,
+				3804D6B01F2B972A00420DAB /* Nimble.framework */,
+				3804D6B11F2B972A00420DAB /* SwiftCheck.framework */,
+			);
+			name = "tests only";
+			sourceTree = "<group>";
+		};
 		38ED2D071E44854100F4D70C = {
 			isa = PBXGroup;
 			children = (
@@ -230,17 +262,9 @@
 		38ED2D2E1E44865C00F4D70C /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				384AB9601F556DD500DE1335 /* Operadics.framework */,
-				384AB95B1F556D5300DE1335 /* Functional.framework */,
-				384AB9591F556D4400DE1335 /* Functional.framework */,
-				38FDFEC71F2B42CF002ECC3A /* Monads.framework */,
-				38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */,
-				38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */,
-				3804D6B01F2B972A00420DAB /* Nimble.framework */,
-				3804D6B11F2B972A00420DAB /* SwiftCheck.framework */,
-				38FDFECA1F2B42DE002ECC3A /* Monads.framework */,
-				38FDFEC51F2B3CEE002ECC3A /* Abstract.framework */,
-				38FDFEC61F2B3CEE002ECC3A /* JSONObject.framework */,
+				38C349941F72CD5400811F72 /* tests only */,
+				38C349931F72CD4500811F72 /* iOS */,
+				38C349921F72CD0F00811F72 /* macOS */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -329,22 +353,25 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = broomburgo.it;
 				TargetAttributes = {
 					3804D6BE1F2B986A00420DAB = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5MTJLVM7R2;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					38FDFE9E1F2B38E6002ECC3A = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5MTJLVM7R2;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					38FDFEA61F2B38E6002ECC3A = {
 						CreatedOnToolsVersion = 8.3.3;
 						DevelopmentTeam = 5MTJLVM7R2;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -460,7 +487,7 @@
 				PRODUCT_NAME = Client;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -483,7 +510,7 @@
 				PRODUCT_NAME = Client;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -496,7 +523,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -504,7 +533,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -548,7 +581,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -556,7 +591,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -605,7 +644,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -630,7 +669,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -649,7 +688,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.broomburgo.ClientTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -668,7 +707,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = it.broomburgo.ClientTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

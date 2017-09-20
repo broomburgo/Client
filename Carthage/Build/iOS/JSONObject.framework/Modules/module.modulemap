@@ -7,4 +7,5 @@ framework module JSONObject {
 
 module JSONObject.Swift {
     header "JSONObject-Swift.h"
+    requires objc
 }

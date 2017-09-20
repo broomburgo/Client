@@ -85,7 +85,7 @@ extension JSONObject: Arbitrary {
 extension CheckerArguments {
 	static func with(_ left: Int, _ right: Int, _ size: Int) -> CheckerArguments {
 		return CheckerArguments(
-			replay: .some(StdGen(left,right),size))
+			replay: .some((StdGen(left,right),size)))
 	}
 }
 

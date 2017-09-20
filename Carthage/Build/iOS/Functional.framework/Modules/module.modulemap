@@ -7,4 +7,5 @@ framework module Functional {
 
 module Functional.Swift {
     header "Functional-Swift.h"
+    requires objc
 }

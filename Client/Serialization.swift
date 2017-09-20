@@ -66,7 +66,7 @@ public struct Serialize {
 //: ------------------------
 
 public struct Deserialize {
-	public static var ignored: (Data) -> ClientResult<()> { return { _ in .success() } }
+	public static var ignored: (Data) -> ClientResult<()> { return { _ in .success(()) } }
 
 	public static var toAnyJSON: (Data) -> ClientResult<Any> {
 		return { data in

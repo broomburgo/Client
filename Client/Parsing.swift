@@ -17,7 +17,7 @@ public struct Parse {
 						.run(
 							ifSuccess: ClientResult.success,
 							ifFailure: ClientResult.failure,
-							ifCancel: F.constant(ClientResult.failure(.invalidHTTPCode(code))))
+							ifCancel: { ClientResult.failure(.invalidHTTPCode(code)) })
 				}
 				return .success(response)
 			}
