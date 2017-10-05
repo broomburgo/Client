@@ -11,9 +11,9 @@ public struct Parse {
 				guard accepted.contains(code) else {
 					return ClientResult.init(response.output)
 						.flatMap(Deserialize.toAnyDictJSON)
-						.mapError(F.constant(.invalidHTTPCode(code)))
+						.mapError { _ in .invalidHTTPCode(code) }
 						.flatMap(errorStrategy)
-						.flatMap(F.constant(ClientResult<HTTPResponse>.failure(.invalidHTTPCode(code))))
+						.flatMap { _ in ClientResult<HTTPResponse>.failure(.invalidHTTPCode(code)) }
 						.run(
 							ifSuccess: ClientResult.success,
 							ifFailure: ClientResult.failure,
@@ -45,7 +45,7 @@ public struct Parse {
 
 	public struct Output {
 		public static func check<OutputType, CheckedType>(at getCheckedType: @escaping (OutputType) -> CheckedType, errorStrategy: @escaping (CheckedType) -> ClientResult<CheckedType>) -> (OutputType) -> ClientResult<OutputType> {
-			return { output in errorStrategy(getCheckedType(output)).map(F.constant(output)) }
+			return { output in errorStrategy(getCheckedType(output)).map { _ in output } }
 		}
 
 		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> ClientResult<OutputType>) -> (OutputType) -> ClientResult<OutputType> {

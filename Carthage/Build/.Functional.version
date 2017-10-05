@@ -1,14 +1,14 @@
 {
   "iOS" : [
     {
-      "hash" : "c32447a527e22d243b44766e49246b9654bb1000489992d90aa43a1936e91d2c",
+      "hash" : "4be014ccd382d391e2339f5bf2615848fead8eb89da82f779b19ffe7aba47ca0",
       "name" : "Functional"
     }
   ],
-  "commitish" : "0.0.6",
+  "commitish" : "0.0.8",
   "Mac" : [
     {
-      "hash" : "6aa799213ea31990eaa84162a572a8e3d76fc1bd8f87576ba3cce13a35261346",
+      "hash" : "2091891eaba8d8a0afa241f4d483be756fbccc04fb1ccf8f86e8ce5f6b70100d",
       "name" : "Functional"
     }
   ]

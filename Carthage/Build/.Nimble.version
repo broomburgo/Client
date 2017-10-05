@@ -1,14 +1,14 @@
 {
   "iOS" : [
     {
-      "hash" : "c5436a8ebebe72466a214412c61d5f367aee052851efc1438b17f620ccd1be10",
+      "hash" : "4caf07c49d83524d3365fe1bead54d6923daf3b7e3d570cfd456145cebb2b436",
       "name" : "Nimble"
     }
   ],
-  "commitish" : "v7.0.1",
+  "commitish" : "v7.0.2",
   "Mac" : [
     {
-      "hash" : "1dafac10b3110f0acb5390cab33e8595c45a82b66af9194d2da13e362162ed21",
+      "hash" : "2f6f64ba7785f288577df160f9ddecdeb38a5a77b77f001f8f1821f7a13be52f",
       "name" : "Nimble"
     }
   ]
