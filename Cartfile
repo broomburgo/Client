@@ -1,4 +1,4 @@
 github "broomburgo/JSONObject"
-github "broomburgo/Abstract" "swift_4"
+github "broomburgo/Abstract" "master"
 github "broomburgo/Functional"
 github "broomburgo/Monads"

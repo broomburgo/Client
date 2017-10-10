@@ -14,11 +14,11 @@ public typealias ConnectionWriter<T> = Writer<Resource<T>,Coeffect<ConnectionAct
 public typealias Connection = (URLRequest) -> ConnectionWriter<Response>
 
 public func failed<T>(with error: ClientError) -> Resource<T> {
-	return Resource<T>.init(Writer.init(Result.failure(error)))
+	return Resource<T>.pure(Writer.pure(Result.failure(error)))
 }
 
 public func succeeded<T>(with value: T) -> Resource<T> {
-	return Resource<T>.init(Writer.init(Result.success(value)))
+	return Resource<T>.pure(Writer.pure(Result.success(value)))
 }
 
 public func failable<T>(from closure: () throws -> Resource<T>) rethrows -> Resource<T> {
@@ -274,7 +274,7 @@ public struct Request {
 			serverResponse: nil,
 			serverOutput: nil)
 
-		return ClientResult.init(Writer.init(value: request, log: info))
+		return ClientResult.pure(Writer.init(value: request, log: info))
 	}
 }
 
@@ -290,7 +290,7 @@ public struct HTTPResponse {
 	}
 
 	public var toWriter: Writer<HTTPResponse,ConnectionInfo> {
-		return Writer(self)
+		return Writer.pure(self)
 			.tell(ConnectionInfo.empty
 				.with { $0.serverResponse = self.URLResponse})
 			.tell(ConnectionInfo.empty

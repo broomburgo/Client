@@ -9,7 +9,7 @@ public struct Parse {
 			return { response in
 				let code = response.URLResponse.statusCode
 				guard accepted.contains(code) else {
-					return ClientResult.init(response.output)
+					return ClientResult.pure(response.output)
 						.flatMap(Deserialize.toAnyDictJSON)
 						.mapError { _ in .invalidHTTPCode(code) }
 						.flatMap(errorStrategy)

@@ -58,21 +58,21 @@ extension Request {
 				}
 
 				if let error = optError {
-					return Resource<HTTPResponse>.init(Writer.init(
+					return Resource<HTTPResponse>.pure(Writer.init(
 						value: .failure(.connection(error)),
 						log: info))
 				} else if let response = optResponse {
 					if let data = optData {
-						return Resource<HTTPResponse>.init(Writer.init(
+						return Resource<HTTPResponse>.pure(Writer.init(
 							value: .success(HTTPResponse(URLResponse: response, output: data)),
 							log: info))
 					} else {
-						return Resource<HTTPResponse>.init(Writer.init(
+						return Resource<HTTPResponse>.pure(Writer.init(
 							value: .failure(.noData),
 							log: info))
 					}
 				} else {
-					return Resource<HTTPResponse>.init(Writer.init(
+					return Resource<HTTPResponse>.pure(Writer.init(
 						value: .failure(.noResponse),
 						log: info))
 				}
