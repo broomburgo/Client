@@ -82,6 +82,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 	public var connectionError: NSError?
 	public var serverResponse: HTTPURLResponse?
 	public var serverOutput: Data?
+	public var downloadedFileURL: URL?
 
 	public func with(transform: (inout ConnectionInfo) -> ()) -> ConnectionInfo {
 		var m_self = self
@@ -97,7 +98,8 @@ public struct ConnectionInfo: Monoid, Equatable {
 			bodyStringRepresentation: nil,
 			connectionError: nil,
 			serverResponse: nil,
-			serverOutput: nil)
+			serverOutput: nil,
+			downloadedFileURL: nil)
 	}
 
 	public static func <> (_ left: ConnectionInfo, _ right: ConnectionInfo) -> ConnectionInfo {
@@ -108,7 +110,8 @@ public struct ConnectionInfo: Monoid, Equatable {
 			bodyStringRepresentation: right.bodyStringRepresentation ?? left.bodyStringRepresentation,
 			connectionError: right.connectionError ?? left.connectionError,
 			serverResponse: right.serverResponse ?? left.serverResponse,
-			serverOutput: right.serverOutput ?? left.serverOutput)
+			serverOutput: right.serverOutput ?? left.serverOutput,
+			downloadedFileURL: right.downloadedFileURL ?? left.downloadedFileURL)
 	}
 
 	public static func == (left: ConnectionInfo, right: ConnectionInfo) -> Bool {
@@ -119,6 +122,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			&& left.connectionError == right.connectionError
 			&& left.serverResponse == right.serverResponse
 			&& left.serverOutput == right.serverOutput
+			&& left.downloadedFileURL == right.downloadedFileURL
 	}
 
 	public var getJSONObject: JSONObject {
@@ -154,6 +158,7 @@ public struct ConnectionInfo: Monoid, Equatable {
 			.flatMap { (try? JSONSerialization.jsonObject(with: $0, options: .allowFragments)).map(JSONObject.with)
 				?? String(data: $0, encoding: String.Encoding.utf8).map(JSONObject.string)
 		}
+		let downloadedFileURLString: JSONObject? = (downloadedFileURL?.absoluteString).map(JSONObject.string)
 
 		return JSONObject.array([
 			.dict(["Connection Name" : connName.get(or: .null)]),
@@ -170,7 +175,8 @@ public struct ConnectionInfo: Monoid, Equatable {
 			.dict(["Connection Error" : connError.get(or: .null)]),
 			.dict(["Response Status Code" : responseStatusCode.get(or: .null)]),
 			.dict(["Response HTTP Headers" : responseHTTPHeaders.get(or: .null)]),
-			.dict(["Response Body" : responseBody.get(or: .null)])])
+			.dict(["Response Body" : responseBody.get(or: .null)]),
+			.dict(["Downloaded File URL" : downloadedFileURLString.get(or: .null)])])
 	}
 }
 
@@ -272,7 +278,8 @@ public struct Request {
 			bodyStringRepresentation: nil,
 			connectionError: nil,
 			serverResponse: nil,
-			serverOutput: nil)
+			serverOutput: nil,
+			downloadedFileURL: nil)
 
 		return ClientResult.pure(Writer.init(value: request, log: info))
 	}
@@ -280,11 +287,11 @@ public struct Request {
 
 //: ------------------------
 
-public struct HTTPResponse {
+public struct HTTPResponse<Output> {
 	public var URLResponse: HTTPURLResponse
-	public var output: Data
+	public var output: Output
 
-	public init(URLResponse: HTTPURLResponse, output: Data) {
+	public init(URLResponse: HTTPURLResponse, output: Output) {
 		self.URLResponse = URLResponse
 		self.output = output
 	}
@@ -294,7 +301,10 @@ public struct HTTPResponse {
 			.tell(ConnectionInfo.empty
 				.with { $0.serverResponse = self.URLResponse})
 			.tell(ConnectionInfo.empty
-				.with { $0.serverOutput = self.output})
+				.with {
+					$0.serverOutput = self.output as? Data
+					$0.downloadedFileURL = self.output as? URL
+			})
 	}
 }
 

@@ -1,4 +1,3 @@
 github "broomburgo/JSONObject"
-github "broomburgo/Abstract" "master"
-github "broomburgo/Functional"
-github "broomburgo/Monads"
+github "typelift/Abstract"
+github "facile-it/FunctionalKit"

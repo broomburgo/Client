@@ -36,11 +36,11 @@ extension URLComponents {
 //: ------------------------
 
 extension Request {
-	public func getHTTPResponse(connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
+	public func getHTTPResponse(connection: @escaping Connection) -> ConnectionWriter<HTTPResponse<Data>> {
 		let result = getURLRequestWriter()
 
 		guard let writer = result.toOptionalValue else {
-			return ConnectionWriter<HTTPResponse>.pure(Result.failure(result.toOptionalError!))
+			return ConnectionWriter<HTTPResponse<Data>>.pure(Result.failure(result.toOptionalError!))
 		}
 
 		let (request,urlRequestInfo) = writer.run
@@ -58,21 +58,21 @@ extension Request {
 				}
 
 				if let error = optError {
-					return Resource<HTTPResponse>.pure(Writer.init(
+					return Resource<HTTPResponse<Data>>.pure(Writer.init(
 						value: .failure(.connection(error)),
 						log: info))
 				} else if let response = optResponse {
 					if let data = optData {
-						return Resource<HTTPResponse>.pure(Writer.init(
-							value: .success(HTTPResponse(URLResponse: response, output: data)),
+						return Resource<HTTPResponse<Data>>.pure(Writer.init(
+							value: .success(HTTPResponse<Data>(URLResponse: response, output: data)),
 							log: info))
 					} else {
-						return Resource<HTTPResponse>.pure(Writer.init(
+						return Resource<HTTPResponse<Data>>.pure(Writer.init(
 							value: .failure(.noData),
 							log: info))
 					}
 				} else {
-					return Resource<HTTPResponse>.pure(Writer.init(
+					return Resource<HTTPResponse<Data>>.pure(Writer.init(
 						value: .failure(.noResponse),
 						log: info))
 				}
@@ -86,7 +86,7 @@ extension Request {
 		path: String,
 		additionalHeaders: [String:String]? = nil,
 		queryStringParameters: [String:Any]? = nil,
-		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse<Data>> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,
@@ -104,7 +104,7 @@ extension Request {
 		path: String,
 		body: Data?,
 		additionalHeaders: [String:String]? = nil,
-		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse<Data>> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,
@@ -122,7 +122,7 @@ extension Request {
 		path: String,
 		body: Data?,
 		additionalHeaders: [String:String]? = nil,
-		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse> {
+		connection: @escaping Connection) -> ConnectionWriter<HTTPResponse<Data>> {
 		return Request(
 			identifier: identifier,
 			configuration: configuration,

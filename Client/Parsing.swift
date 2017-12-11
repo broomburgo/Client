@@ -5,7 +5,7 @@ import Functional
 public struct Parse {
 
 	public struct Response {
-		public static func acceptOnly(httpCodes accepted: [Int], parseErrorsWith errorStrategy: @escaping ([String:Any]) -> ClientResult<[String:Any]> = { .success($0) }) -> (HTTPResponse) -> ClientResult<HTTPResponse> {
+		public static func acceptOnly(httpCodes accepted: [Int], parseErrorsWith errorStrategy: @escaping ([String:Any]) -> ClientResult<[String:Any]> = { .success($0) }) -> (HTTPResponse<Data>) -> ClientResult<HTTPResponse<Data>> {
 			return { response in
 				let code = response.URLResponse.statusCode
 				guard accepted.contains(code) else {
@@ -13,7 +13,7 @@ public struct Parse {
 						.flatMap(Deserialize.toAnyDictJSON)
 						.mapError { _ in .invalidHTTPCode(code) }
 						.flatMap(errorStrategy)
-						.flatMap { _ in ClientResult<HTTPResponse>.failure(.invalidHTTPCode(code)) }
+						.flatMap { _ in ClientResult<HTTPResponse<Data>>.failure(.invalidHTTPCode(code)) }
 						.run(
 							ifSuccess: ClientResult.success,
 							ifFailure: ClientResult.failure,
@@ -23,7 +23,7 @@ public struct Parse {
 			}
 		}
 
-		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401]) -> (HTTPResponse) -> ClientResult<HTTPResponse> {
+		public static func checkUnauthorized(withHTTPCodes codes: [Int] = [401]) -> (HTTPResponse<Data>) -> ClientResult<HTTPResponse<Data>> {
 			return { response in
 				if codes.contains(response.URLResponse.statusCode) {
 					return .failure(ClientError.unauthorized)
@@ -33,7 +33,7 @@ public struct Parse {
 			}
 		}
 
-		public static func getHeader(at key: String) -> (HTTPResponse) -> ClientResult<String> {
+		public static func getHeader(at key: String) -> (HTTPResponse<Data>) -> ClientResult<String> {
 			return { response in
 				guard let
 					header = response.URLResponse.allHeaderFields[key] as? String
