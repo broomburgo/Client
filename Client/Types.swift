@@ -1,16 +1,47 @@
 import Abstract
-import Monads
+import FunctionalKit
 import JSONObject
 
 public enum ConnectionAction {
 	case cancel
 }
 
-public typealias ClientResult<T> = Result<T,ClientError>
-public typealias ClientWriter<T> = Writer<ClientResult<T>,ConnectionInfo>
-public typealias Resource<T> = Deferred<ClientWriter<T>>
+public struct ConnectionActionHandler: ReaderType, Monoid {
+	public typealias EnvironmentType = ConnectionAction
+	public typealias ParameterType = ()
+
+	private let root: Coeffect<ConnectionAction>
+	public init(_ handler: @escaping (ConnectionAction) -> ()) {
+		self.root = Coeffect<ConnectionAction>.unfold(handler)
+	}
+
+	public static func from(concrete: Reader<ConnectionAction, ()>) -> ConnectionActionHandler {
+		return ConnectionActionHandler.init(concrete.run)
+	}
+
+	public func run(_ environment: ConnectionAction) -> () {
+		root.run(environment)
+	}
+
+	public static func unfold(_ function: @escaping (ConnectionAction) -> ()) -> ConnectionActionHandler {
+		return ConnectionActionHandler.init(function)
+	}
+
+	public static let empty = ConnectionActionHandler.init(fignore)
+
+	public static func <> (left: ConnectionActionHandler, right: ConnectionActionHandler) -> ConnectionActionHandler {
+		return ConnectionActionHandler.init { action in
+			left.run(action)
+			right.run(action)
+		}
+	}
+}
+
+public typealias ClientResult<T> = Result<ClientError,T>
+public typealias ClientWriter<T> = Writer<ConnectionInfo,ClientResult<T>>
+public typealias Resource<T> = Future<ClientWriter<T>>
 public typealias Response = (optData: Data?, optResponse: URLResponse?, optError: Error?)
-public typealias ConnectionWriter<T> = Writer<Resource<T>,Coeffect<ConnectionAction>>
+public typealias ConnectionWriter<T> = Writer<ConnectionActionHandler,Resource<T>>
 public typealias Connection = (URLRequest) -> ConnectionWriter<Response>
 
 public func failed<T>(with error: ClientError) -> Resource<T> {
@@ -256,7 +287,7 @@ public struct Request {
 			body: body)
 	}
 
-	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> ClientResult<Writer<URLRequest,ConnectionInfo>> {
+	public func getURLRequestWriter(cachePolicy: URLRequest.CachePolicy = .reloadIgnoringLocalCacheData, timeoutInterval: TimeInterval = 20) -> ClientResult<Writer<ConnectionInfo,URLRequest>> {
 		guard let url = urlComponents.url else {
 			return ClientResult.failure(.request(urlComponents))
 		}
@@ -281,7 +312,7 @@ public struct Request {
 			serverOutput: nil,
 			downloadedFileURL: nil)
 
-		return ClientResult.pure(Writer.init(value: request, log: info))
+		return ClientResult.pure(Writer.init(log: info, value: request))
 	}
 }
 
@@ -296,7 +327,7 @@ public struct HTTPResponse<Output> {
 		self.output = output
 	}
 
-	public var toWriter: Writer<HTTPResponse,ConnectionInfo> {
+	public var toWriter: Writer<ConnectionInfo,HTTPResponse> {
 		return Writer.pure(self)
 			.tell(ConnectionInfo.empty
 				.with { $0.serverResponse = self.URLResponse})

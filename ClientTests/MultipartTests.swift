@@ -64,8 +64,8 @@ class MultipartTests: XCTestCase {
 	}
 
 	func testCorrectNumberOfElements() {
-		property("Multipart has correct count for each element in body") <- forAll { (multi: Multipart) in
-			(multi.boundary.isEmpty == false && multi.parts.count > 0) ==> {
+		property("Multipart has correct count for each element in body", arguments: .with(97793187,1645514869,1)) <- forAll { (multi: Multipart) in
+			(multi.contentBoundary.isEmpty == false && multi.parts.count > 0) ==> {
 				let dataString = String(data: try! multi.getData(), encoding: .utf8)!
 
 				let expectedContentDispositionCount = multi.parts.count
@@ -75,7 +75,7 @@ class MultipartTests: XCTestCase {
 
 				let expectedBoundariesCount = multi.parts.count > 0 ? (multi.parts.count + 1) : 0
 				let gotBoundariesCount = dataString
-					.components(separatedBy: multi.boundary)
+					.components(separatedBy: multi.contentBoundary)
 					.count - 1
 
 				let expectedFileCount = multi.parts.filter { if case .file = $0 { return true } else { return false } }.count

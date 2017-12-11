@@ -39,10 +39,9 @@ public struct Serialize {
 	fileprivate typealias PlistStringReducer = (String, (String, Any)) -> String
 
 	fileprivate static func wsBodyDataURLEncodedString(dict: [String:Any], rootKey: String?) -> String {
-		let rawDataString = dict.reduce("", wsBodyDataURLEncodedReducerWithRootKey(rootKey))
-		var characters = rawDataString.characters
+		var characters = dict.reduce("", wsBodyDataURLEncodedReducerWithRootKey(rootKey))
 		characters.removeFirst()
-		return String(characters)
+		return characters
 	}
 
 	fileprivate static func wsBodyDataURLEncodedReducerWithRootKey(_ rootKey: String?) -> PlistStringReducer {

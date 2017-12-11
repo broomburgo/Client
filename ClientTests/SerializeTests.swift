@@ -3,8 +3,7 @@ import SwiftCheck
 import Client
 import JSONObject
 import Abstract
-import Monads
-import Functional
+import FunctionalKit
 
 class SerializeTests: XCTestCase {
     

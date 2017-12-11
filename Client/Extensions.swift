@@ -1,5 +1,5 @@
 import JSONObject
-import Monads
+import FunctionalKit
 import Abstract
 
 //: ------------------------
@@ -40,10 +40,10 @@ extension Request {
 		let result = getURLRequestWriter()
 
 		guard let writer = result.toOptionalValue else {
-			return ConnectionWriter<HTTPResponse<Data>>.pure(Result.failure(result.toOptionalError!))
+			return ConnectionWriter<HTTPResponse<Data>>.pure(Future.pure(Writer.pure(ClientResult.failure(result.toOptionalError!))))
 		}
 
-		let (request,urlRequestInfo) = writer.run
+		let (urlRequestInfo,request) = writer.run
 
 		return connection(request).map {
 			$0.flatMapTT {
@@ -59,22 +59,22 @@ extension Request {
 
 				if let error = optError {
 					return Resource<HTTPResponse<Data>>.pure(Writer.init(
-						value: .failure(.connection(error)),
-						log: info))
+						log: info,
+						value: .failure(.connection(error))))
 				} else if let response = optResponse {
 					if let data = optData {
 						return Resource<HTTPResponse<Data>>.pure(Writer.init(
-							value: .success(HTTPResponse<Data>(URLResponse: response, output: data)),
-							log: info))
+							log: info,
+							value: .success(HTTPResponse<Data>(URLResponse: response, output: data))))
 					} else {
 						return Resource<HTTPResponse<Data>>.pure(Writer.init(
-							value: .failure(.noData),
-							log: info))
+							log: info,
+							value: .failure(.noData)))
 					}
 				} else {
 					return Resource<HTTPResponse<Data>>.pure(Writer.init(
-						value: .failure(.noResponse),
-						log: info))
+						log: info,
+						value: .failure(.noResponse)))
 				}
 			}
 		}

@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3804D6B21F2B972A00420DAB /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3804D6B01F2B972A00420DAB /* Nimble.framework */; };
 		3804D6B31F2B972A00420DAB /* SwiftCheck.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3804D6B11F2B972A00420DAB /* SwiftCheck.framework */; };
-		3804D6B51F2B974200420DAB /* Monads.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38FDFEC71F2B42CF002ECC3A /* Monads.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3804D6B61F2B974200420DAB /* Abstract.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3804D6B71F2B974200420DAB /* JSONObject.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3804D6B81F2B974200420DAB /* Nimble.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3804D6B01F2B972A00420DAB /* Nimble.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -21,15 +20,11 @@
 		3804D6CA1F2B989700420DAB /* Serialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ED2D351E449BEC00F4D70C /* Serialization.swift */; };
 		3804D6CB1F2B989700420DAB /* Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ED2D2C1E44864C00F4D70C /* Types.swift */; };
 		3804D6CC1F2B989700420DAB /* Utilites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382AE79E1E6954BA00C8EB0E /* Utilites.swift */; };
-		3804D6CD1F2B98B500420DAB /* Monads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFECA1F2B42DE002ECC3A /* Monads.framework */; };
 		3804D6CE1F2B98B500420DAB /* Abstract.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC51F2B3CEE002ECC3A /* Abstract.framework */; };
 		3804D6CF1F2B98B500420DAB /* JSONObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC61F2B3CEE002ECC3A /* JSONObject.framework */; };
-		384AB95A1F556D4400DE1335 /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384AB9591F556D4400DE1335 /* Functional.framework */; };
-		384AB95C1F556D5300DE1335 /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384AB95B1F556D5300DE1335 /* Functional.framework */; };
-		384AB95E1F556D7E00DE1335 /* Functional.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384AB9591F556D4400DE1335 /* Functional.framework */; };
-		384AB95F1F556D8000DE1335 /* Functional.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 384AB9591F556D4400DE1335 /* Functional.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		384AB9611F556DD500DE1335 /* Operadics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 384AB9601F556DD500DE1335 /* Operadics.framework */; };
-		384AB9621F556DDE00DE1335 /* Operadics.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 384AB9601F556DD500DE1335 /* Operadics.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		388B2F0F1FDEB697009D228E /* FunctionalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 388B2F0E1FDEB697009D228E /* FunctionalKit.framework */; };
+		388B2F111FDEB6A7009D228E /* FunctionalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 388B2F101FDEB6A7009D228E /* FunctionalKit.framework */; };
+		388B2F121FDEB6D3009D228E /* FunctionalKit.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 388B2F101FDEB6A7009D228E /* FunctionalKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		38FDFEA81F2B38E6002ECC3A /* Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFE9F1F2B38E6002ECC3A /* Client.framework */; };
 		38FDFEB61F2B38F0002ECC3A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38ED2D391E44A8CE00F4D70C /* Extensions.swift */; };
 		38FDFEB71F2B38F0002ECC3A /* Multipart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 380BDF351EA8BB3E00207066 /* Multipart.swift */; };
@@ -44,8 +39,6 @@
 		38FDFEC01F2B38FD002ECC3A /* Client.h in Headers */ = {isa = PBXBuildFile; fileRef = 38ED2D141E44854100F4D70C /* Client.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		38FDFEC31F2B3CDE002ECC3A /* Abstract.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */; };
 		38FDFEC41F2B3CDE002ECC3A /* JSONObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */; };
-		38FDFEC81F2B42CF002ECC3A /* Monads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC71F2B42CF002ECC3A /* Monads.framework */; };
-		38FDFEC91F2B42CF002ECC3A /* Monads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC71F2B42CF002ECC3A /* Monads.framework */; };
 		38FDFF3B1F2B8186002ECC3A /* Abstract.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */; };
 		38FDFF3C1F2B818A002ECC3A /* JSONObject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */; };
 /* End PBXBuildFile section */
@@ -67,10 +60,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				3804D6B51F2B974200420DAB /* Monads.framework in CopyFiles */,
-				384AB9621F556DDE00DE1335 /* Operadics.framework in CopyFiles */,
 				3804D6B61F2B974200420DAB /* Abstract.framework in CopyFiles */,
-				384AB95F1F556D8000DE1335 /* Functional.framework in CopyFiles */,
+				388B2F121FDEB6D3009D228E /* FunctionalKit.framework in CopyFiles */,
 				3804D6B71F2B974200420DAB /* JSONObject.framework in CopyFiles */,
 				3804D6B81F2B974200420DAB /* Nimble.framework in CopyFiles */,
 				3804D6B91F2B974200420DAB /* SwiftCheck.framework in CopyFiles */,
@@ -88,9 +79,8 @@
 		380BDF351EA8BB3E00207066 /* Multipart.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Multipart.swift; sourceTree = "<group>"; };
 		380BDF371EA8C50E00207066 /* MultipartTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartTests.swift; sourceTree = "<group>"; };
 		382AE79E1E6954BA00C8EB0E /* Utilites.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilites.swift; sourceTree = "<group>"; };
-		384AB9591F556D4400DE1335 /* Functional.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Functional.framework; path = Carthage/Build/Mac/Functional.framework; sourceTree = "<group>"; };
-		384AB95B1F556D5300DE1335 /* Functional.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Functional.framework; path = Carthage/Build/iOS/Functional.framework; sourceTree = "<group>"; };
-		384AB9601F556DD500DE1335 /* Operadics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Operadics.framework; path = Carthage/Build/Mac/Operadics.framework; sourceTree = "<group>"; };
+		388B2F0E1FDEB697009D228E /* FunctionalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FunctionalKit.framework; path = Carthage/Build/iOS/FunctionalKit.framework; sourceTree = "<group>"; };
+		388B2F101FDEB6A7009D228E /* FunctionalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FunctionalKit.framework; path = Carthage/Build/Mac/FunctionalKit.framework; sourceTree = "<group>"; };
 		38B73A341E475EFB001F3FD7 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		38B73A351E475EFB001F3FD7 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		38B73A361E475F02001F3FD7 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -112,8 +102,6 @@
 		38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JSONObject.framework; path = Carthage/Build/Mac/JSONObject.framework; sourceTree = "<group>"; };
 		38FDFEC51F2B3CEE002ECC3A /* Abstract.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Abstract.framework; path = Carthage/Build/iOS/Abstract.framework; sourceTree = "<group>"; };
 		38FDFEC61F2B3CEE002ECC3A /* JSONObject.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JSONObject.framework; path = Carthage/Build/iOS/JSONObject.framework; sourceTree = "<group>"; };
-		38FDFEC71F2B42CF002ECC3A /* Monads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Monads.framework; path = Carthage/Build/Mac/Monads.framework; sourceTree = "<group>"; };
-		38FDFECA1F2B42DE002ECC3A /* Monads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Monads.framework; path = Carthage/Build/iOS/Monads.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,10 +109,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				388B2F0F1FDEB697009D228E /* FunctionalKit.framework in Frameworks */,
 				3804D6CF1F2B98B500420DAB /* JSONObject.framework in Frameworks */,
 				3804D6CE1F2B98B500420DAB /* Abstract.framework in Frameworks */,
-				3804D6CD1F2B98B500420DAB /* Monads.framework in Frameworks */,
-				384AB95C1F556D5300DE1335 /* Functional.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,10 +119,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				38FDFEC81F2B42CF002ECC3A /* Monads.framework in Frameworks */,
+				388B2F111FDEB6A7009D228E /* FunctionalKit.framework in Frameworks */,
 				38FDFEC31F2B3CDE002ECC3A /* Abstract.framework in Frameworks */,
 				38FDFEC41F2B3CDE002ECC3A /* JSONObject.framework in Frameworks */,
-				384AB95A1F556D4400DE1335 /* Functional.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,10 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3804D6B21F2B972A00420DAB /* Nimble.framework in Frameworks */,
-				384AB9611F556DD500DE1335 /* Operadics.framework in Frameworks */,
 				3804D6B31F2B972A00420DAB /* SwiftCheck.framework in Frameworks */,
-				384AB95E1F556D7E00DE1335 /* Functional.framework in Frameworks */,
-				38FDFEC91F2B42CF002ECC3A /* Monads.framework in Frameworks */,
 				38FDFF3C1F2B818A002ECC3A /* JSONObject.framework in Frameworks */,
 				38FDFF3B1F2B8186002ECC3A /* Abstract.framework in Frameworks */,
 				38FDFEA81F2B38E6002ECC3A /* Client.framework in Frameworks */,
@@ -181,8 +164,7 @@
 		38C349921F72CD0F00811F72 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
-				384AB9591F556D4400DE1335 /* Functional.framework */,
-				38FDFEC71F2B42CF002ECC3A /* Monads.framework */,
+				388B2F101FDEB6A7009D228E /* FunctionalKit.framework */,
 				38FDFEC11F2B3CDE002ECC3A /* Abstract.framework */,
 				38FDFEC21F2B3CDE002ECC3A /* JSONObject.framework */,
 			);
@@ -192,8 +174,7 @@
 		38C349931F72CD4500811F72 /* iOS */ = {
 			isa = PBXGroup;
 			children = (
-				384AB95B1F556D5300DE1335 /* Functional.framework */,
-				38FDFECA1F2B42DE002ECC3A /* Monads.framework */,
+				388B2F0E1FDEB697009D228E /* FunctionalKit.framework */,
 				38FDFEC51F2B3CEE002ECC3A /* Abstract.framework */,
 				38FDFEC61F2B3CEE002ECC3A /* JSONObject.framework */,
 			);
@@ -203,7 +184,6 @@
 		38C349941F72CD5400811F72 /* tests only */ = {
 			isa = PBXGroup;
 			children = (
-				384AB9601F556DD500DE1335 /* Operadics.framework */,
 				3804D6B01F2B972A00420DAB /* Nimble.framework */,
 				3804D6B11F2B972A00420DAB /* SwiftCheck.framework */,
 			);

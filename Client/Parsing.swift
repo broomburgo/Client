@@ -1,6 +1,5 @@
-import Monads
+import FunctionalKit
 import JSONObject
-import Functional
 
 public struct Parse {
 
@@ -14,10 +13,9 @@ public struct Parse {
 						.mapError { _ in .invalidHTTPCode(code) }
 						.flatMap(errorStrategy)
 						.flatMap { _ in ClientResult<HTTPResponse<Data>>.failure(.invalidHTTPCode(code)) }
-						.run(
-							ifSuccess: ClientResult.success,
-							ifFailure: ClientResult.failure,
-							ifCancel: { ClientResult.failure(.invalidHTTPCode(code)) })
+						.fold(
+							onSuccess: ClientResult.success,
+							onFailure: ClientResult.failure)
 				}
 				return .success(response)
 			}
@@ -49,7 +47,7 @@ public struct Parse {
 		}
 
 		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> ClientResult<OutputType>) -> (OutputType) -> ClientResult<OutputType> {
-			return check(at: F.identity, errorStrategy: errorStrategy)
+			return check(at: fidentity, errorStrategy: errorStrategy)
 		}
 
 		public static func getElement<T>(type: T.Type, at path: Path) -> ([String:Any]) -> ClientResult<T> {
