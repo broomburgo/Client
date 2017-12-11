@@ -1,11 +1,12 @@
 language: objective-c
-osx_image: xcode9
+osx_image: xcode9.1
 xcode_project: Client.xcodeproj
 xcode_scheme: Client
-xcode_sdk: macosx10.12
+xcode_sdk: macosx10.13
 
 script:
-- xcodebuild clean build test -project "Client.xcodeproj" -scheme "Client" -destination 'generic/platform=macOS'
+  - xcodebuild clean build test -project "Client.xcodeproj" -scheme "Client" -destination 'generic/platform=macOS'
 
 after_success:
-- bash <(curl -s https://codecov.io/bash)
+  - bash <(curl -s https://codecov.io/bash)
+
