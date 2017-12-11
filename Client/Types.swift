@@ -6,36 +6,7 @@ public enum ConnectionAction {
 	case cancel
 }
 
-public struct ConnectionActionHandler: ReaderType, Monoid {
-	public typealias EnvironmentType = ConnectionAction
-	public typealias ParameterType = ()
-
-	private let root: Coeffect<ConnectionAction>
-	public init(_ handler: @escaping (ConnectionAction) -> ()) {
-		self.root = Coeffect<ConnectionAction>.unfold(handler)
-	}
-
-	public static func from(concrete: Reader<ConnectionAction, ()>) -> ConnectionActionHandler {
-		return ConnectionActionHandler.init(concrete.run)
-	}
-
-	public func run(_ environment: ConnectionAction) -> () {
-		root.run(environment)
-	}
-
-	public static func unfold(_ function: @escaping (ConnectionAction) -> ()) -> ConnectionActionHandler {
-		return ConnectionActionHandler.init(function)
-	}
-
-	public static let empty = ConnectionActionHandler.init(fignore)
-
-	public static func <> (left: ConnectionActionHandler, right: ConnectionActionHandler) -> ConnectionActionHandler {
-		return ConnectionActionHandler.init { action in
-			left.run(action)
-			right.run(action)
-		}
-	}
-}
+public typealias ConnectionActionHandler = Handler<ConnectionAction>
 
 public typealias ClientResult<T> = Result<ClientError,T>
 public typealias ClientWriter<T> = Writer<ConnectionInfo,ClientResult<T>>
