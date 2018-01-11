@@ -47,7 +47,7 @@ public struct Parse {
 		}
 
 		public static func check<OutputType>(errorStrategy: @escaping (OutputType) -> ClientResult<OutputType>) -> (OutputType) -> ClientResult<OutputType> {
-			return check(at: fidentity, errorStrategy: errorStrategy)
+			return check(at: f.identity, errorStrategy: errorStrategy)
 		}
 
 		public static func getElement<T>(type: T.Type, at path: Path) -> ([String:Any]) -> ClientResult<T> {
